@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 
-export default async function Index() {
+export default async function Search() {
   const supabase = createClient();
 
   const {
@@ -14,5 +14,5 @@ export default async function Index() {
     return redirect("/login");
   }
 
-  return <Header>Dashboard</Header>;
+  return <Header>Search</Header>;
 }
