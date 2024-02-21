@@ -1,44 +1,40 @@
-import NextLogo from "./NextLogo";
-import SupabaseLogo from "./SupabaseLogo";
+import Link from "next/link";
+import AuthButton from "@/components/AuthButton";
 
-export default function Header() {
+export default function Header({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex gap-8 justify-center items-center">
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <SupabaseLogo />
-        </a>
-        <span className="border-l rotate-45 h-6" />
-        <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
-          <NextLogo />
-        </a>
-      </div>
-      <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        The fastest way to build apps with{" "}
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Supabase
-        </a>{" "}
-        and{" "}
-        <a
-          href="https://nextjs.org/"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Next.js
-        </a>
-      </p>
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
-    </div>
+    <>
+      <header className="fixed w-full my-8">
+        <div className="container mx-auto bg-white rounded-full">
+          <div className="flex h-20 py-4 px-8 justify-center items-center">
+            <div className="flex flex-1">
+              <Link
+                href="/record"
+                className="flex items-center justify-center w-10 h-10 text-white bg-orange-500 rounded-full"
+              >
+                <span>+</span>
+              </Link>
+              <form action="/search" className="ml-5">
+                <input
+                  type="text"
+                  name="q"
+                  placeholder="Search"
+                  className="py-2 px-4 border border-gray-300 rounded-full placeholder:text-black"
+                />
+              </form>
+            </div>
+            <h1 className="text-xl font-semibold italic self-center flex-none">
+              <Link href="/">Dictation app</Link>
+            </h1>
+            <div className="flex flex-1">
+              <div className="ml-auto">
+                <AuthButton />
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div className="pt-32 min-h-screen container mx-auto">{children}</div>
+    </>
   );
 }
