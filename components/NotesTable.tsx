@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Database, Tables, Enums } from "@/types/supabase";
+import { Tables } from "@/types/supabase";
+import Link from "next/link";
 
 export default function NotesTable() {
   const [notes, setNotes] = useState<Tables<"notes">[] | null>([]);
@@ -49,9 +50,15 @@ export default function NotesTable() {
           <tbody>
             {notes.map((note, i) => (
               <tr key={note.id} className="border border-black">
-                <td className="p-2">#{note.id}</td>
                 <td className="p-2">
-                  {urls?.[i] && <a href={urls[i]} className="text-blue-500 underline">Link to audio</a>}
+                  <Link href={`/recording/${note.id}`} className="text-blue-500 underline">#{note.id}</Link>
+                </td>
+                <td className="p-2">
+                  {urls?.[i] && (
+                    <a href={urls[i]} className="text-blue-500 underline">
+                      Link to audio
+                    </a>
+                  )}
                 </td>
               </tr>
             ))}

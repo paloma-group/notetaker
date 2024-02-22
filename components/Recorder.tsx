@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { decode } from "base64-arraybuffer";
 import { v4 } from "uuid";
 import { useRouter } from "next/navigation";
 
