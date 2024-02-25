@@ -15,6 +15,7 @@ export type Database = {
           audio_file_path: string | null
           created_at: string
           id: number
+          transcript: string | null
           user_id: string | null
         }
         Insert: {
@@ -22,6 +23,7 @@ export type Database = {
           audio_file_path?: string | null
           created_at?: string
           id?: number
+          transcript?: string | null
           user_id?: string | null
         }
         Update: {
@@ -29,6 +31,7 @@ export type Database = {
           audio_file_path?: string | null
           created_at?: string
           id?: number
+          transcript?: string | null
           user_id?: string | null
         }
         Relationships: [
