@@ -1,10 +1,11 @@
-import AuthButton from "@/components/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
-import NotesTable from '@/components/NotesTable';
+import Note from "@/components/Note";
 
-export default async function Index() {
+export default async function Recording({ params }: { params: { id: string } }) {
+  const id = params.id;
+
   const supabase = createClient();
 
   const {
@@ -15,9 +16,11 @@ export default async function Index() {
     return redirect("/login");
   }
 
+  const { data } = await supabase.from("notes").select().eq('id', id);
+
   return (
     <Header>
-      <NotesTable />
+      <Note note={data?.[0]} />
     </Header>
   );
 }

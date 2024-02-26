@@ -34,7 +34,7 @@ export default function Header({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <div className="pt-32 min-h-screen container mx-auto">{children}</div>
+      <div className="pt-36 min-h-screen container mx-auto">{children}</div>
     </>
   );
 }
