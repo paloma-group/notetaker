@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { transcript } from "@/utils/openai/transcript";
 import { v4 } from "uuid";
 import { useRouter } from "next/navigation";
 
@@ -27,8 +28,11 @@ const Recorder = ({ userId }: { userId: string }) => {
 
     recorder.onstop = async () => {
       const blob = new Blob(audioChunks, { type: "audio/mp3" });
+      const audioUrl = URL.createObjectURL(blob);
+      const transcription = await transcript(blob);
       const arrayBuffer = await blob.arrayBuffer();
       const supabase = createClient();
+
       const { data, error } = await supabase.storage
         .from("voice-notes")
         .upload(`/${userId}/${v4()}/voice-note.mp3`, arrayBuffer, {
@@ -42,6 +46,7 @@ const Recorder = ({ userId }: { userId: string }) => {
             audio_file_path: data.path,
             audio_file_id: data?.id,
             user_id: userId,
+            transcript: transcription,
           })
           .select();
 
