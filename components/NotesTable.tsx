@@ -13,7 +13,10 @@ export default function NotesTable() {
 
   useEffect(() => {
     async function getNotes() {
-      const { data: notesData } = await supabase.from("notes").select(); //.eq('user_id', user.id); can leave off it policy is setup correctly
+      const { data: notesData } = await supabase
+        .from("notes")
+        .select()
+        .order("created_at", { ascending: false }); //.eq('user_id', user.id); can leave off it policy is setup correctly
 
       if (!notesData || !notesData?.length) return;
 
@@ -51,7 +54,12 @@ export default function NotesTable() {
             {notes.map((note, i) => (
               <tr key={note.id} className="border border-black">
                 <td className="p-2">
-                  <Link href={`/recording/${note.id}`} className="text-blue-500 underline">#{note.id}</Link>
+                  <Link
+                    href={`/recording/${note.id}`}
+                    className="text-blue-500 underline"
+                  >
+                    #{note.id}
+                  </Link>
                 </td>
                 <td className="p-2">
                   {urls?.[i] && (

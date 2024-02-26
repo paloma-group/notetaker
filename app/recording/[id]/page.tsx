@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import Note from "@/components/Note";
 
-export default async function Recording({ params }: { params: { id: string } }) {
+export default async function Recording({
+  params,
+}: {
+  params: { id: string };
+}) {
   const id = params.id;
 
   const supabase = createClient();
@@ -16,11 +20,16 @@ export default async function Recording({ params }: { params: { id: string } }) 
     return redirect("/login");
   }
 
-  const { data } = await supabase.from("notes").select().eq('id', id);
+  const { data } = await supabase
+    .from("notes")
+    .select()
+    .eq("id", id)
+    .limit(1)
+    .single();
 
   return (
     <Header>
-      <Note note={data?.[0]} />
+      <Note note={data} />
     </Header>
   );
 }
