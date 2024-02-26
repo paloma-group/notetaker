@@ -2,7 +2,13 @@
 
 import { Tables } from "@/types/supabase";
 
-export default function NotesTable({ note }: { note?: Tables<"notes"> }) {
+export default function NotesTable({
+  note,
+  inputs,
+}: {
+  note?: Tables<"notes"> | null;
+  inputs?: Tables<"transcript_transformation_inputs">[] | null;
+}) {
   return note ? (
     <div className="flex p-12 bg-gray-200 rounded-3xl mb-16">
       <div className="self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
@@ -35,11 +41,15 @@ export default function NotesTable({ note }: { note?: Tables<"notes"> }) {
           <div className="p-8 rounded-xl bg-gray-100">
             <h3 className="text-lg mb-3">Transform note</h3>
             <div className="flex flex-wrap">
-              <button className="py-3 px-6 border border-gray-400 rounded-full mr-3">Summary</button>
-              <button className="py-3 px-6 border border-gray-400 rounded-full mr-3">Email</button>
-              <button className="py-3 px-6 border border-gray-400 rounded-full mr-3">Notes</button>
-              <button className="py-3 px-6 border border-gray-400 rounded-full mr-3">Social Post</button>
-              <button className="py-3 px-6 border border-gray-400 rounded-full mr-3">Enhance</button>
+              {!!inputs?.length &&
+                inputs.map((input) => (
+                  <button
+                    key={input.type}
+                    className="py-3 px-6 border border-gray-400 rounded-full mr-3"
+                  >
+                    {input.type}
+                  </button>
+                ))}
             </div>
           </div>
         </div>
