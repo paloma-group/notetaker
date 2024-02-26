@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { transcript } from "@/utils/openai/transcript";
 import { v4 } from "uuid";
 import { useRouter } from "next/navigation";
 
@@ -28,63 +29,10 @@ const Recorder = ({ userId }: { userId: string }) => {
     recorder.onstop = async () => {
       const blob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(blob);
-      // const audio = new Audio(audioUrl);
-      let transcription = null;
-      // try {
-      //   const reader = new FileReader();
-      //   reader.readAsDataURL(blob);
-      //   reader.onloadend = async function () {
-      //     const base64Audio = reader.result.split(',')[1]; // Remove the data URL prefix
-      //     const response = await fetch("/api/speechToText", {
-      //       method: "POST",
-      //       headers: {
-      //         'Content-Type': 'application/json'
-      //       },
-      //       body: JSON.stringify({ audio: base64Audio }),
-      //     });
-      //     const data = await response.json();
-      //     if (response.status !== 200) {
-      //       throw data.error || new Error(`Request failed with status ${response.status}`);
-      //     }
-      //     console.log("DONE: ", data.result)
-      //     setTranscription(data.result);
-      //   }
-      // } catch (error) {
-      //   console.log("I FAILLLLLLLLLLLLL - ")
-      //   setTranscription(null)
-      //   console.error(error);
-      //   alert(error.message);
-      // }
-
-      try {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        await new Promise((resolve, reject) => {
-          reader.onloadend = async function () {
-            const base64Audio = reader.result.split(',')[1]; // Remove the data URL prefix
-            const response = await fetch("/api/speechToText", {
-              method: "POST",
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ audio: base64Audio }),
-            });
-            const data = await response.json();
-            if (response.status !== 200) {
-              throw data.error || new Error(`Request failed with status ${response.status}`);
-            }
-            console.log("DONE: ", data.result)
-            transcription = data.result;
-            resolve(); // Resolve the Promise when the asynchronous operations are finished
-          }
-        });
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      }
-
+      const transcription = await transcript(blob);
       const arrayBuffer = await blob.arrayBuffer();
       const supabase = createClient();
+
       const { data, error } = await supabase.storage
         .from("voice-notes")
         .upload(`/${userId}/${v4()}/voice-note.mp3`, arrayBuffer, {

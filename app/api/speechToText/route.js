@@ -41,12 +41,9 @@ export async function POST(request) {
 }
 // This function converts audio data to text using the OpenAI API
 async function convertAudioToText(audioData) {
-  // Convert the audio data to MP3 format
-  const mp3AudioData = await convertAudioToMp3(audioData);
-
   // Write the MP3 audio data to a file
   const outputPath = '/tmp/output.mp3';
-  fs.writeFileSync(outputPath, mp3AudioData);
+  fs.writeFileSync(outputPath, audioData);
 
   // Transcribe the audio
   const response = await openai.audio.transcriptions.create({
@@ -58,20 +55,4 @@ async function convertAudioToText(audioData) {
   // The API response contains the transcribed text
   const transcribedText = response.text;
   return transcribedText;
-}
-
-// This function converts audio data to MP3 format using ffmpeg
-async function convertAudioToMp3(audioData) {
-  // Write the audio data to a file
-  const inputPath = '/tmp/input.webm';
-  fs.writeFileSync(inputPath, audioData);
-  // Convert the audio to MP3 using ffmpeg
-  const outputPath = '/tmp/output.mp3';
-  await execAsync(`ffmpeg -i ${inputPath} ${outputPath}`);
-  // Read the converted audio data
-  const mp3AudioData = fs.readFileSync(outputPath);
-  // Delete the temporary files
-  fs.unlinkSync(inputPath);
-  fs.unlinkSync(outputPath);
-  return mp3AudioData;
 }
