@@ -2,24 +2,13 @@ import { Fragment, useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { type NoteWithTransforms, TTInput } from "@/components/Note";
 import { createClient } from "@/utils/supabase/client";
+import { transform } from "@/utils/openai/transform";
 
-const transformText = async ({
-  transcript,
-  input,
-}: {
-  transcript: string;
-  input: string;
-}) => {
-  const response = await fetch("/api/transformText", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ transcript, input }),
-  });
-  const data = await response.json();
-
-  return data;
+// Define a function to render paragraphs from text
+const renderParagraphs = (text: string): JSX.Element[] => {
+  return text.split('\n').map((paragraph, index) => (
+    <p key={index} className='text-sm text-gray-500'>{paragraph}</p>
+  ));
 };
 
 export default function Modal({
@@ -36,9 +25,11 @@ export default function Modal({
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const [text, setText] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!open) return;
+    setIsLoading(true)
 
     // Find transformation
     const transformedText = note.transcript_transformations.find(
@@ -46,9 +37,8 @@ export default function Modal({
     )?.transformed_text;
 
     if (!transformedText) {
-      // create one
       (async () => {
-        const text = "This is a summary" // await transformText({ transcript: note.transcript || "", input: input.input });
+        const text = await transform(note.transcript, input.input);
 
         if (!text) return;
 
@@ -72,10 +62,11 @@ export default function Modal({
           // Hacky way so we don't have to refetch... TODO: find a better way
           note.transcript_transformations.push(data);
           setText(data.transformed_text);
+          setIsLoading(false)
         }
-
       })();
     } else {
+      setIsLoading(false)
       setText(transformedText);
     }
   }, [open]);
@@ -118,7 +109,13 @@ export default function Modal({
                       </Dialog.Title>
                     )}
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">{text}</p>
+                    {
+                      isLoading ? (
+                        <p className='text-sm text-gray-500'>Loading...</p>
+                      ) : (
+                        renderParagraphs(text)
+                      )
+                    }
                     </div>
                   </div>
                 </div>
