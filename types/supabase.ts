@@ -44,6 +44,87 @@ export type Database = {
           }
         ]
       }
+      transcript_transformation_inputs: {
+        Row: {
+          created_at: string
+          id: number
+          input: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          input: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          input?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_transcript_transformation_input_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      transcript_transformations: {
+        Row: {
+          created_at: string
+          id: number
+          input_id: number | null
+          note_id: number | null
+          transformed_text: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          input_id?: number | null
+          note_id?: number | null
+          transformed_text?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          input_id?: number | null
+          note_id?: number | null
+          transformed_text?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_transcript_transformations_input_id_fkey"
+            columns: ["input_id"]
+            isOneToOne: false
+            referencedRelation: "transcript_transformation_inputs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_transcript_transformations_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_transcript_transformations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
