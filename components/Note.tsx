@@ -67,7 +67,7 @@ export default function Note({
         <div className="grow">
           <div className="border-b border-black pb-6">
             <h2 className="text-4xl font-semibold mb-3">Note #{note.id}</h2>
-            <p className="text-sm">{note.created_at}</p>
+            <p className="text-sm">{new Date(note.created_at).toDateString()}</p>
           </div>
           <div className="pt-6">
             <h3 className="text-xl font-semibold">Transcript</h3>
