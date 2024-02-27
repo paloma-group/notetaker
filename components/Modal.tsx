@@ -1,20 +1,83 @@
 import { Fragment, useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { type NoteWithTransforms, TTInput } from "@/components/Note";
+import { createClient } from "@/utils/supabase/client";
+
+const transformText = async ({
+  transcript,
+  input,
+}: {
+  transcript: string;
+  input: string;
+}) => {
+  const response = await fetch("/api/transformText", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ transcript, input }),
+  });
+  const data = await response.json();
+
+  return data;
+};
 
 export default function Modal({
   title,
+  note,
+  input,
   open = false,
   setOpen,
 }: {
   title?: string;
+  note: NoteWithTransforms;
+  input: TTInput;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const [text, setText] = useState("");
+
   useEffect(() => {
     if (!open) return;
 
-    // TODO: Check if transformation already exists
-    // If not create it then show
+    // Find transformation
+    const transformedText = note.transcript_transformations.find(
+      (t) => t?.transcript_transformation_inputs?.type === title,
+    )?.transformed_text;
+
+    if (!transformedText) {
+      // create one
+      (async () => {
+        const text = "This is a summary" // await transformText({ transcript: note.transcript || "", input: input.input });
+
+        if (!text) return;
+
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { data, error } = await supabase
+          .from("transcript_transformations")
+          .insert({
+            input_id: input.id,
+            note_id: note.id,
+            transformed_text: text,
+            user_id: note.user_id,
+          })
+          .select()
+          .limit(1)
+          .single();
+
+        if (data?.transformed_text) {
+          // @ts-ignore
+          // Hacky way so we don't have to refetch... TODO: find a better way
+          note.transcript_transformations.push(data);
+          setText(data.transformed_text);
+        }
+
+      })();
+    } else {
+      setText(transformedText);
+    }
   }, [open]);
 
   return (
@@ -55,10 +118,7 @@ export default function Modal({
                       </Dialog.Title>
                     )}
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequatur amet labore.
-                      </p>
+                      <p className="text-sm text-gray-500">{text}</p>
                     </div>
                   </div>
                 </div>

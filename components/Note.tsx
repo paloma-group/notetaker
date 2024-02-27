@@ -4,29 +4,43 @@ import { Tables } from "@/types/supabase";
 import { useState } from "react";
 import Modal from "@/components/Modal";
 
-type Note = {
+export type NoteWithTransforms = {
   id: number;
   transcript: string | null;
   created_at: string;
+  user_id: string | null;
   transcript_transformations: {
     transformed_text: string | null;
+    transcript_transformation_inputs: {
+      type: string;
+    } | null;
   }[];
 };
 
-export default function NotesTable({
+export type TTInput = {
+  id: number;
+  input: string;
+  type: string;
+};
+
+export default function Note({
   note,
   inputs,
 }: {
-  note?: Note | null;
-  inputs?: Tables<"transcript_transformation_inputs">[] | null;
+  note: NoteWithTransforms;
+  inputs: TTInput[];
 }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
+  const [input, setInput] = useState<TTInput>();
 
   const onInputClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.currentTarget;
 
-    setModalTitle(button.id);
+    const inputSelection = inputs.find(i => i.type === button.id);
+
+    if (!inputSelection) return;
+
+    setInput(inputSelection);
     setModalOpen(true);
   };
 
@@ -77,7 +91,13 @@ export default function NotesTable({
           </div>
         </div>
       </div>
-      <Modal open={modalOpen} setOpen={setModalOpen} title={modalTitle} />
+      <Modal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        title={input?.type}
+        note={note}
+        input={input}
+      />
     </>
   ) : (
     <p>No note to display</p>
