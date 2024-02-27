@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import Note from "@/components/Note";
-import { QueryResult, QueryData, QueryError } from '@supabase/supabase-js';
+import { QueryResult, QueryData, QueryError } from "@supabase/supabase-js";
 
 export default async function Recording({
   params,
@@ -23,18 +23,16 @@ export default async function Recording({
 
   const { data: note } = await supabase
     .from("notes")
-    .select(`id, transcript, created_at, transcript_transformations ( transformed_text )`)
+    .select(
+      `id, transcript, created_at, user_id, transcript_transformations ( transformed_text, transcript_transformation_inputs ( type ) )`,
+    )
     .eq("id", id)
     .limit(1)
     .single();
 
   const { data: inputs } = await supabase
     .from("transcript_transformation_inputs")
-    .select();
+    .select(`id, input, type`);
 
-  return (
-    <Header>
-      <Note note={note} inputs={inputs} />
-    </Header>
-  );
+  return <Header>{note ? <Note note={note} inputs={inputs} /> : null}</Header>;
 }
