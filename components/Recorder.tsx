@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { transcript } from "@/utils/openai/transcript";
+import { highlights } from "@/utils/openai/highlights";
 import { v4 } from "uuid";
 import { useRouter } from "next/navigation";
 
@@ -30,6 +31,7 @@ const Recorder = ({ userId }: { userId: string }) => {
       const blob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(blob);
       const transcription = await transcript(blob);
+      const transcription_highlights = await highlights(transcription);
       const arrayBuffer = await blob.arrayBuffer();
       const supabase = createClient();
 
@@ -47,6 +49,7 @@ const Recorder = ({ userId }: { userId: string }) => {
             audio_file_id: data?.id,
             user_id: userId,
             transcript: transcription,
+            highlights: transcription_highlights,
           })
           .select();
 
