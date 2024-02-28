@@ -48,10 +48,12 @@ const Recorder = ({ userId }: { userId: string }) => {
             user_id: userId,
             transcript: transcription,
           })
-          .select();
+          .select()
+          .limit(1)
+          .single();
 
         if (note) {
-          push("/");
+          push(`/recording/${note.id}`);
         }
       }
       setTitle("Record your voice note");
@@ -106,6 +108,7 @@ const Recorder = ({ userId }: { userId: string }) => {
       <button
         className={`block w-16 h-16 mx-auto text-white font-bold rounded-full ${isRunning ? "bg-black hover:bg-gray-800" : "bg-orange-500 hover:bg-orange-400"}`}
         onClick={handleRecordClick}
+        disabled={title === "Processing"}
       >
         {isRunning ? "STOP" : "REC"}
       </button>
