@@ -36,7 +36,7 @@ export default function Note({
   const onInputClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.currentTarget;
 
-    const inputSelection = inputs.find(i => i.type === button.id);
+    const inputSelection = inputs.find((i) => i.type === button.id);
 
     if (!inputSelection) return;
 
@@ -65,14 +65,12 @@ export default function Note({
           </ul>
         </div>
         <div className="grow">
-          <div className="border-b border-black pb-6">
+          <div className="border-b border-white pb-6">
             <h2 className="text-4xl font-semibold mb-3">Note #{note.id}</h2>
-            <p className="text-sm">{note.created_at}</p>
-          </div>
-          <div className="pt-6">
-            <h3 className="text-xl font-semibold">Transcript</h3>
-            <p className="my-4">{note.transcript}</p>
-            <div className="p-8 rounded-xl bg-gray-100">
+            <p className="text-sm">
+              {new Date(note.created_at).toDateString()}
+            </p>
+            <div className="mt-8 p-8 rounded-xl bg-gray-100">
               <h3 className="text-lg mb-3">Transform note</h3>
               <div className="flex flex-wrap">
                 {!!inputs?.length &&
@@ -80,7 +78,7 @@ export default function Note({
                     <button
                       id={input.type}
                       key={input.type}
-                      className="py-3 px-6 border border-gray-400 rounded-full mr-3"
+                      className="py-3 px-6 border border-gray-400 bg-white hover:border-orange-500 rounded-full mr-3"
                       onClick={onInputClick}
                     >
                       {input.type}
@@ -88,6 +86,10 @@ export default function Note({
                   ))}
               </div>
             </div>
+          </div>
+          <div className="pt-6">
+            <h3 className="text-xl font-semibold">Transcript</h3>
+            <p className="my-4">{note.transcript}</p>
           </div>
         </div>
       </div>
