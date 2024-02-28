@@ -1,8 +1,10 @@
-import AuthButton from "@/components/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
-import NotesTable from '@/components/NotesTable';
+import NotesTable from "@/components/NotesTable";
+import Link from "next/link";
+
+export const dynamic = 'force-dynamic';
 
 export default async function Index() {
   const supabase = createClient();
@@ -15,9 +17,27 @@ export default async function Index() {
     return redirect("/login");
   }
 
+  const { data: notes } = await supabase
+    .from("notes")
+    .select()
+    .order("created_at", { ascending: false });
+
   return (
     <Header>
-      <NotesTable />
+      <div className="h-dvh flex flex-col items-center justify-center -mt-36">
+        <div className="">
+          <Link
+            href="/record"
+            className="flex items-center px-6 py-4 border border-gray-300 hover:border-orange-500 rounded-full"
+          >
+            <span className="block rounded-full bg-orange-500 mr-2">
+              <span className="block w-5 h-5 m-3 rounded-full bg-white"></span>
+            </span>
+            <span className="text-2xl">Record a note</span>
+          </Link>
+        </div>
+      </div>
+      <NotesTable notes={notes} />
     </Header>
   );
 }

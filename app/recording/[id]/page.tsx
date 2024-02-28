@@ -2,7 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import Note from "@/components/Note";
-import { QueryResult, QueryData, QueryError } from "@supabase/supabase-js";
+
+export const dynamic = 'force-dynamic';
 
 export default async function Recording({
   params,
@@ -34,5 +35,9 @@ export default async function Recording({
     .from("transcript_transformation_inputs")
     .select(`id, input, type`);
 
-  return <Header>{note ? <Note note={note} inputs={inputs} /> : null}</Header>;
+  return (
+    <Header>
+      {note && inputs ? <Note note={note} inputs={inputs} /> : null}
+    </Header>
+  );
 }
