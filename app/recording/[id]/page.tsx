@@ -25,7 +25,7 @@ export default async function Recording({
   const { data: note } = await supabase
     .from("notes")
     .select(
-      `id, transcript, created_at, user_id, transcript_transformations ( transformed_text, transcript_transformation_inputs ( type ) )`,
+      `id, transcript, highlights, created_at, user_id, transcript_transformations ( transformed_text, transcript_transformation_inputs ( type ) )`,
     )
     .eq("id", id)
     .limit(1)

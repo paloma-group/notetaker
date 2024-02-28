@@ -4,9 +4,21 @@ import { Tables } from "@/types/supabase";
 import { useState } from "react";
 import Modal from "@/components/Modal";
 
+// Define a function to render highlights from text
+const renderHighlights = (text: string | null): JSX.Element[] => {
+  if(!text){
+    return [];
+  }
+
+  return text.split('\n').map((highlight, index) => (
+    <li key={index} className="my-4">{highlight}</li>
+  ));
+};
+
 export type NoteWithTransforms = {
   id: number;
   transcript: string | null;
+  highlights: string | null;
   created_at: string;
   user_id: string | null;
   transcript_transformations: {
@@ -50,18 +62,7 @@ export default function Note({
         <div className="self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
           <h3 className="text-xl font-semibold">Highlights</h3>
           <ul className="list-disc pl-4">
-            <li className="my-4">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-              eiusmod tempor incididunt
-            </li>
-            <li className="my-4">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-              eiusmod tempor incididunt
-            </li>
-            <li className="my-4">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-              eiusmod tempor incididunt
-            </li>
+            {renderHighlights(note.highlights)}
           </ul>
         </div>
         <div className="grow">
