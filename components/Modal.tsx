@@ -6,9 +6,12 @@ import { transform } from "@/utils/openai/transform";
 
 // Define a function to render paragraphs from text
 const renderParagraphs = (text: string): JSX.Element[] => {
-  return text.split('\n').map((paragraph, index) => (
-    <p key={index} className='text-sm text-gray-500'>{paragraph}</p>
-  ));
+  const { text: transformationText } = JSON.parse(text);
+  const parsedTransformation = Array.isArray(transformationText) ? transformationText : transformationText.split('\n');
+
+  return parsedTransformation.map((paragraph: string, index: number) =>
+    paragraph ? <p key={index} className='text-sm text-gray-500'>{paragraph}</p> : <br key={index} />
+  );
 };
 
 export default function Modal({
