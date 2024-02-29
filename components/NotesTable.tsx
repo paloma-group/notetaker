@@ -14,7 +14,7 @@ export default function NotesTable({ notes }: { notes?: Tables<"notes">[] | null
               href={`/recording/${note.id}`}
               className="flex flex-col h-48 px-5 py-6 bg-white rounded-3xl border-2 hover:border-orange-500 cursor-pointer"
             >
-              <span className="block mt-auto text-3xl">Note {note.id}</span>
+              <span className="block mt-auto text-3xl">{note?.title ? note.title : `Note #${note.id}`}</span>
             </Link>
           ))}
         </div>

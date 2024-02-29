@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { transcript } from "@/utils/openai/transcript";
-import { highlights } from "@/utils/openai/highlights";
-import { v4 } from "uuid";
 import { useRouter } from "next/navigation";
+import { createNote } from "@/utils/notes/create-note";
 
 const Recorder = ({ userId }: { userId: string }) => {
-  const { push } = useRouter();
+  const { push, refresh } = useRouter();
 
   const [title, setTitle] = useState("Record your voice note");
 
@@ -29,36 +27,19 @@ const Recorder = ({ userId }: { userId: string }) => {
 
     recorder.onstop = async () => {
       const blob = new Blob(audioChunks, { type: "audio/mp3" });
-      const audioUrl = URL.createObjectURL(blob);
-      const transcription = await transcript(blob);
-      const transcription_highlights = await highlights(transcription);
-      const arrayBuffer = await blob.arrayBuffer();
-      const supabase = createClient();
+      const note = await createNote({
+        supabase: createClient(),
+        userId,
+        audioBlob: blob,
+      });
 
-      const { data, error } = await supabase.storage
-        .from("voice-notes")
-        .upload(`/${userId}/${v4()}/voice-note.mp3`, arrayBuffer, {
-          contentType: "audio/mpeg",
-        });
-
-      if (data?.path) {
-        const { data: note, error } = await supabase
-          .from("notes")
-          .insert({
-            audio_file_path: data.path,
-            audio_file_id: data?.id,
-            user_id: userId,
-            transcript: transcription,
-            highlights: transcription_highlights,
-          })
-          .select()
-          .limit(1)
-          .single();
-
-        if (note) {
+      if (note) {
+        startTransition(() => {
+          refresh();
           push(`/recording/${note.id}`);
-        }
+        });
       }
+
       setTitle("Record your voice note");
       setMinutes(0);
       setSeconds(0);
