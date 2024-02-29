@@ -20,7 +20,7 @@ export default async function Index() {
 
   const { data: notes } = await supabase
     .from("notes")
-    .select()
+    .select("id, title")
     .order("created_at", { ascending: false });
 
   return (
