@@ -19,10 +19,16 @@ const renderHighlights = (text: string | null): JSX.Element[] => {
 
 export type NoteWithTransforms = {
   id: number;
+  title: string | null;
   transcript: string | null;
   highlights: string | null;
   created_at: string;
   user_id: string | null;
+  note_tags: {
+    tags: {
+      name: string;
+    } | null;
+  }[];
   transcript_transformations: {
     transformed_text: string | null;
     transcript_transformation_inputs: {
@@ -69,11 +75,25 @@ export default function Note({
         </div>
         <div className="grow">
           <div className="border-b border-white pb-6">
-            <h2 className="text-4xl font-semibold mb-3">Note #{note.id}</h2>
+            <h2 className="text-4xl font-semibold mb-3">
+              {note?.title ? note.title : `Note #${note.id}`}
+            </h2>
             <p className="text-sm">
               {new Date(note.created_at).toDateString()}
             </p>
-            <div className="mt-8 p-5 md:p-8 rounded-xl bg-gray-100">
+            {note?.note_tags?.length ? (
+              <div className="flex mt-4">
+                {note.note_tags.map((t, i) => (
+                  <span
+                    key={`tag-${i}`}
+                    className="capitalize text-xs py-2 px-4 border border-gray-400 rounded-full mr-3"
+                  >
+                    {t.tags?.name}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+            <div className="mt-8 p-8 rounded-xl bg-gray-100">
               <h3 className="text-lg mb-3">Transform note</h3>
               <div className="flex flex-wrap">
                 {!!inputs?.length &&

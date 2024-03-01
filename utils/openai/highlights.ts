@@ -1,11 +1,13 @@
-export const highlights = async (transcription: string | null): Promise<string | null> => {
+export const highlights = async (
+  transcription: string | null,
+): Promise<{ title: string; highlights: string[]; keywords: string[] } | null> => {
   try {
     const response = await fetch("/api/transcriptionToHighlights", {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({transcription})
+      body: JSON.stringify({ transcription }),
     });
     const data = await response.json();
 
@@ -14,7 +16,6 @@ export const highlights = async (transcription: string | null): Promise<string |
       return null; // Return null directly
     }
     return data.result;
-
   } catch (error) {
     console.error(error);
     return null;

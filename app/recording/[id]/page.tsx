@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Note from "@/components/Note";
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Recording({
   params,
@@ -25,7 +26,7 @@ export default async function Recording({
   const { data: note } = await supabase
     .from("notes")
     .select(
-      `id, transcript, highlights, created_at, user_id, transcript_transformations ( transformed_text, transcript_transformation_inputs ( type ) )`,
+      `id, title, transcript, highlights, created_at, user_id, note_tags ( tags ( name ) ), transcript_transformations ( transformed_text, transcript_transformation_inputs ( type ) )`,
     )
     .eq("id", id)
     .limit(1)

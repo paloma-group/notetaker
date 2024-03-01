@@ -11,6 +11,7 @@ export default function Header({ children }: { children: React.ReactNode }) {
               <Link
                 href="/record"
                 className="hidden md:flex items-center justify-center w-10 h-10 text-white bg-orange-500 rounded-full mr-5"
+                scroll={false}
               >
                 <span>+</span>
               </Link>
