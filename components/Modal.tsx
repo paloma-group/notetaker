@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { type NoteWithTransforms, TTInput } from "@/components/Note";
+import { type NoteWithTransforms, TTPrompt } from "@/components/Note";
 import { createClient } from "@/utils/supabase/client";
 import { transform } from "@/utils/openai/transform";
 
@@ -17,13 +17,13 @@ const renderParagraphs = (text: string): JSX.Element[] => {
 export default function Modal({
   title,
   note,
-  input,
+  prompt,
   open = false,
   setOpen,
 }: {
   title?: string;
   note: NoteWithTransforms;
-  input: TTInput;
+  prompt?: TTPrompt;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
@@ -35,13 +35,14 @@ export default function Modal({
     setIsLoading(true)
 
     // Find transformation
-    const transformedText = note.transcript_transformations.find(
-      (t) => t?.transcript_transformation_inputs?.type === title,
+    const transformedText = note.transformation_outputs.find(
+      (t) => t?.transformation_prompts?.type === title,
     )?.transformed_text;
 
     if (!transformedText) {
       (async () => {
-        const text = await transform(note.transcript, input.input);
+        if (!prompt) return;
+        const text = await transform(note.transcript, prompt.prompt);
 
         if (!text) return;
 
@@ -49,9 +50,9 @@ export default function Modal({
         const { data: { user } } = await supabase.auth.getUser();
 
         const { data, error } = await supabase
-          .from("transcript_transformations")
+          .from("transformation_outputs")
           .insert({
-            input_id: input.id,
+            prompt_id: prompt.id,
             note_id: note.id,
             transformed_text: text,
             user_id: note.user_id,
@@ -63,7 +64,7 @@ export default function Modal({
         if (data?.transformed_text) {
           // @ts-ignore
           // Hacky way so we don't have to refetch... TODO: find a better way
-          note.transcript_transformations.push(data);
+          note.transformation_outputs.push(data);
           setText(data.transformed_text);
           setIsLoading(false)
         }

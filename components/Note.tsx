@@ -29,38 +29,38 @@ export type NoteWithTransforms = {
       name: string;
     } | null;
   }[];
-  transcript_transformations: {
+  transformation_outputs: {
     transformed_text: string | null;
-    transcript_transformation_inputs: {
+    transformation_prompts: {
       type: string;
     } | null;
   }[];
 };
 
-export type TTInput = {
+export type TTPrompt = {
   id: number;
-  input: string;
+  prompt: string;
   type: string;
 };
 
 export default function Note({
   note,
-  inputs,
+  prompts,
 }: {
   note: NoteWithTransforms;
-  inputs: TTInput[];
+  prompts: TTPrompt[];
 }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [input, setInput] = useState<TTInput>();
+  const [prompt, setPrompt] = useState<TTPrompt>();
 
-  const onInputClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onPromptClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.currentTarget;
 
-    const inputSelection = inputs.find((i) => i.type === button.id);
+    const promptSelection = prompts.find((i) => i.type === button.id);
 
-    if (!inputSelection) return;
+    if (!promptSelection) return;
 
-    setInput(inputSelection);
+    setPrompt(promptSelection);
     setModalOpen(true);
   };
 
@@ -96,15 +96,15 @@ export default function Note({
             <div className="mt-8 p-8 rounded-xl bg-gray-100">
               <h3 className="text-lg mb-3">Transform note</h3>
               <div className="flex flex-wrap">
-                {!!inputs?.length &&
-                  inputs.map((input) => (
+                {!!prompts?.length &&
+                  prompts.map((prompt) => (
                     <button
-                      id={input.type}
-                      key={input.type}
+                      id={prompt.type}
+                      key={prompt.type}
                       className="text-sm md:text-normal mb-4 py-1.5 md:py-3 px-3 md:px-6 border border-gray-400 bg-white hover:border-orange-500 rounded-full mr-3"
-                      onClick={onInputClick}
+                      onClick={onPromptClick}
                     >
-                      {input.type}
+                      {prompt.type}
                     </button>
                   ))}
               </div>
@@ -125,9 +125,9 @@ export default function Note({
       <Modal
         open={modalOpen}
         setOpen={setModalOpen}
-        title={input?.type}
+        title={prompt?.type}
         note={note}
-        input={input}
+        prompt={prompt}
       />
     </>
   ) : (

@@ -104,25 +104,25 @@ export type Database = {
         }
         Relationships: []
       }
-      transcript_transformation_inputs: {
+      transformation_prompts: {
         Row: {
           created_at: string
           id: number
-          input: string
+          prompt: string
           type: string
           user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: number
-          input: string
+          prompt: string
           type: string
           user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: number
-          input?: string
+          prompt?: string
           type?: string
           user_id?: string | null
         }
@@ -136,11 +136,11 @@ export type Database = {
           }
         ]
       }
-      transcript_transformations: {
+      transformation_outputs: {
         Row: {
           created_at: string
           id: number
-          input_id: number | null
+          prompt_id: number | null
           note_id: number | null
           transformed_text: string | null
           user_id: string | null
@@ -148,7 +148,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: number
-          input_id?: number | null
+          prompt_id?: number | null
           note_id?: number | null
           transformed_text?: string | null
           user_id?: string | null
@@ -156,7 +156,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
-          input_id?: number | null
+          prompt_id?: number | null
           note_id?: number | null
           transformed_text?: string | null
           user_id?: string | null
@@ -164,9 +164,9 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "public_transcript_transformations_input_id_fkey"
-            columns: ["input_id"]
+            columns: ["prompt_id"]
             isOneToOne: false
-            referencedRelation: "transcript_transformation_inputs"
+            referencedRelation: "transformation_prompts"
             referencedColumns: ["id"]
           },
           {
