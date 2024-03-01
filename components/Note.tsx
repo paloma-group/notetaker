@@ -6,12 +6,14 @@ import Modal from "@/components/Modal";
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
-  if(!text){
+  if (!text) {
     return [];
   }
 
-  return text.split('\n').map((highlight, index) => (
-    <li key={index} className="my-4">{highlight}</li>
+  return text.split("\n").map((highlight, index) => (
+    <li key={index} className="my-4">
+      {highlight}
+    </li>
   ));
 };
 
@@ -58,8 +60,8 @@ export default function Note({
 
   return note ? (
     <>
-      <div className="flex p-12 bg-gray-200 rounded-3xl mb-16">
-        <div className="self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
+      <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl mb-16">
+        <div className="hidden md:block self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
           <h3 className="text-xl font-semibold">Highlights</h3>
           <ul className="list-disc pl-4">
             {renderHighlights(note.highlights)}
@@ -71,7 +73,7 @@ export default function Note({
             <p className="text-sm">
               {new Date(note.created_at).toDateString()}
             </p>
-            <div className="mt-8 p-8 rounded-xl bg-gray-100">
+            <div className="mt-8 p-5 md:p-8 rounded-xl bg-gray-100">
               <h3 className="text-lg mb-3">Transform note</h3>
               <div className="flex flex-wrap">
                 {!!inputs?.length &&
@@ -79,7 +81,7 @@ export default function Note({
                     <button
                       id={input.type}
                       key={input.type}
-                      className="py-3 px-6 border border-gray-400 bg-white hover:border-orange-500 rounded-full mr-3"
+                      className="text-sm md:text-normal mb-4 py-1.5 md:py-3 px-3 md:px-6 border border-gray-400 bg-white hover:border-orange-500 rounded-full mr-3"
                       onClick={onInputClick}
                     >
                       {input.type}
@@ -89,6 +91,12 @@ export default function Note({
             </div>
           </div>
           <div className="pt-6">
+            <div className="block md:hidden mb-8">
+              <h3 className="text-xl font-semibold">Highlights</h3>
+              <ul className="list-disc pl-4">
+                {renderHighlights(note.highlights)}
+              </ul>
+            </div>
             <h3 className="text-xl font-semibold">Transcript</h3>
             <p className="my-4">{note.transcript}</p>
           </div>

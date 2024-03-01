@@ -7,7 +7,7 @@ export default function NotesTable({ notes }: { notes?: Tables<"notes">[] | null
   return (
     <>
       {!!notes?.length ? (
-        <div className="grid grid-cols-3 gap-10 p-10 bg-gray-200 rounded-3xl mb-8 -mt-32">
+        <div className="grid md:grid-cols-3 gap-5 md:gap-10 p-5 md:p-10 bg-gray-200 rounded-3xl mb-4 md:mb-8 -mt-32">
           {notes.map((note, i) => (
             <Link
               key={note.id}
