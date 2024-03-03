@@ -13,7 +13,13 @@ module.exports = {
           background: "hsl(var(--btn-background))",
           "background-hover": "hsl(var(--btn-background-hover))",
         },
+        error: {
+          50: "#F5222D",
+        }
       },
+      fontSize: {
+        "5xxl": ['56px', '28px']
+      }
     },
   },
   plugins: [],

@@ -31,7 +31,7 @@ export default async function Index() {
             className="flex items-center px-6 py-4 border border-gray-300 hover:border-orange-500 rounded-full"
           >
             <span className="block rounded-full bg-orange-500 mr-2">
-              <span className="block w-5 h-5 m-3 rounded-full bg-white"></span>
+              <span className="block w-3 h-3 m-3 rounded-full bg-white"></span>
             </span>
             <span className="text-2xl">Record a note</span>
           </Link>
