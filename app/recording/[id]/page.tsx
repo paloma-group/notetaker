@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Note from "@/components/Note";
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Recording({
   params,
@@ -25,19 +26,19 @@ export default async function Recording({
   const { data: note } = await supabase
     .from("notes")
     .select(
-      `id, transcript, highlights, created_at, user_id, transcript_transformations ( transformed_text, transcript_transformation_inputs ( type ) )`,
+      `id, title, transcript, highlights, created_at, user_id, note_tags ( tags ( name ) ), transformation_outputs ( transformed_text, transformation_prompts ( type ) )`,
     )
     .eq("id", id)
     .limit(1)
     .single();
 
-  const { data: inputs } = await supabase
-    .from("transcript_transformation_inputs")
-    .select(`id, input, type`);
+  const { data: prompts } = await supabase
+    .from("transformation_prompts")
+    .select(`id, prompt, type`);
 
   return (
     <Header>
-      {note && inputs ? <Note note={note} inputs={inputs} /> : null}
+      {note && prompts ? <Note note={note} prompts={prompts} /> : null}
     </Header>
   );
 }

@@ -5,6 +5,7 @@ import NotesTable from "@/components/NotesTable";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Index() {
   const supabase = createClient();
@@ -19,7 +20,7 @@ export default async function Index() {
 
   const { data: notes } = await supabase
     .from("notes")
-    .select()
+    .select("id, title, note_tags ( tags ( name ) )")
     .order("created_at", { ascending: false });
 
   return (

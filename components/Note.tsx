@@ -6,60 +6,68 @@ import Modal from "@/components/Modal";
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
-  if(!text){
+  if (!text) {
     return [];
   }
 
-  return text.split('\n').map((highlight, index) => (
-    <li key={index} className="my-4">{highlight}</li>
+  return text.split("\n").map((highlight, index) => (
+    <li key={index} className="my-4">
+      {highlight}
+    </li>
   ));
 };
 
 export type NoteWithTransforms = {
   id: number;
+  title: string | null;
   transcript: string | null;
   highlights: string | null;
   created_at: string;
   user_id: string | null;
-  transcript_transformations: {
+  note_tags: {
+    tags: {
+      name: string;
+    } | null;
+  }[];
+  transformation_outputs: {
     transformed_text: string | null;
-    transcript_transformation_inputs: {
+    transformation_prompts: {
       type: string;
     } | null;
   }[];
 };
 
-export type TTInput = {
+export type TTPrompt = {
   id: number;
-  input: string;
+  prompt: string;
   type: string;
 };
 
 export default function Note({
   note,
-  inputs,
+  prompts,
 }: {
   note: NoteWithTransforms;
-  inputs: TTInput[];
+  prompts: TTPrompt[];
 }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [input, setInput] = useState<TTInput>();
+  const [prompt, setPrompt] = useState<TTPrompt>();
 
-  const onInputClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onPromptClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.currentTarget;
 
-    const inputSelection = inputs.find((i) => i.type === button.id);
+    const promptSelection = prompts.find((i) => i.type === button.id);
 
-    if (!inputSelection) return;
+    if (!promptSelection) return;
 
-    setInput(inputSelection);
+    setPrompt(promptSelection);
     setModalOpen(true);
   };
 
   return note ? (
     <>
-      <div className="flex p-12 bg-gray-200 rounded-3xl mb-16">
-        <div className="self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
+      <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl mb-16">
+        <div className="hidden md:block self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
           <h3 className="text-xl font-semibold">Highlights</h3>
           <ul className="list-disc pl-4">
             {renderHighlights(note.highlights)}
@@ -67,28 +75,48 @@ export default function Note({
         </div>
         <div className="grow">
           <div className="border-b border-white pb-6">
-            <h2 className="text-4xl font-semibold mb-3">Note #{note.id}</h2>
+            <h2 className="text-4xl font-semibold mb-3">
+              {note?.title ? note.title : `Note #${note.id}`}
+            </h2>
             <p className="text-sm">
               {new Date(note.created_at).toDateString()}
             </p>
+            {note?.note_tags?.length ? (
+              <div className="flex mt-4">
+                {note.note_tags.map((t, i) => (
+                  <span
+                    key={`tag-${i}`}
+                    className="capitalize text-xs py-2 px-4 border border-gray-400 rounded-full mr-3"
+                  >
+                    {t.tags?.name}
+                  </span>
+                ))}
+              </div>
+            ) : null}
             <div className="mt-8 p-8 rounded-xl bg-gray-100">
               <h3 className="text-lg mb-3">Transform note</h3>
               <div className="flex flex-wrap">
-                {!!inputs?.length &&
-                  inputs.map((input) => (
+                {!!prompts?.length &&
+                  prompts.map((prompt) => (
                     <button
-                      id={input.type}
-                      key={input.type}
-                      className="py-3 px-6 border border-gray-400 bg-white hover:border-orange-500 rounded-full mr-3"
-                      onClick={onInputClick}
+                      id={prompt.type}
+                      key={prompt.type}
+                      className="text-sm md:text-normal mb-4 py-1.5 md:py-3 px-3 md:px-6 border border-gray-400 bg-white hover:border-orange-500 rounded-full mr-3"
+                      onClick={onPromptClick}
                     >
-                      {input.type}
+                      {prompt.type}
                     </button>
                   ))}
               </div>
             </div>
           </div>
           <div className="pt-6">
+            <div className="block md:hidden mb-8">
+              <h3 className="text-xl font-semibold">Highlights</h3>
+              <ul className="list-disc pl-4">
+                {renderHighlights(note.highlights)}
+              </ul>
+            </div>
             <h3 className="text-xl font-semibold">Transcript</h3>
             <p className="my-4">{note.transcript}</p>
           </div>
@@ -97,9 +125,9 @@ export default function Note({
       <Modal
         open={modalOpen}
         setOpen={setModalOpen}
-        title={input?.type}
+        title={prompt?.type}
         note={note}
-        input={input}
+        prompt={prompt}
       />
     </>
   ) : (

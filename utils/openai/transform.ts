@@ -1,4 +1,4 @@
-export const transform = async (transcription: string | null, input: string): Promise<string | null> => {
+export const transform = async (transcription: string | null, prompt: string): Promise<string | null> => {
   try {
     const response = await fetch("/api/transformText", {
       method: "POST",
@@ -7,7 +7,7 @@ export const transform = async (transcription: string | null, input: string): Pr
       },
       body: JSON.stringify({
         transcription,
-        input
+        prompt
       })
     });
     const data = await response.json();

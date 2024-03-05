@@ -9,32 +9,71 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      note_tags: {
+        Row: {
+          created_at: string
+          id: number
+          note_id: number | null
+          tag_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          note_id?: number | null
+          tag_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          note_id?: number | null
+          tag_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_note_tags_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_note_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       notes: {
         Row: {
           audio_file_id: string | null
           audio_file_path: string | null
           created_at: string
-          id: number
-          transcript: string | null
           highlights: string | null
+          id: number
+          title: string | null
+          transcript: string | null
           user_id: string | null
         }
         Insert: {
           audio_file_id?: string | null
           audio_file_path?: string | null
           created_at?: string
-          id?: number
-          transcript?: string | null
           highlights?: string | null
+          id?: number
+          title?: string | null
+          transcript?: string | null
           user_id?: string | null
         }
         Update: {
           audio_file_id?: string | null
           audio_file_path?: string | null
           created_at?: string
-          id?: number
-          transcript?: string | null
           highlights?: string | null
+          id?: number
+          title?: string | null
+          transcript?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -47,25 +86,43 @@ export type Database = {
           }
         ]
       }
-      transcript_transformation_inputs: {
+      tags: {
         Row: {
           created_at: string
           id: number
-          input: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      transformation_prompts: {
+        Row: {
+          created_at: string
+          id: number
+          prompt: string
           type: string
           user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: number
-          input: string
+          prompt: string
           type: string
           user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: number
-          input?: string
+          prompt?: string
           type?: string
           user_id?: string | null
         }
@@ -79,11 +136,11 @@ export type Database = {
           }
         ]
       }
-      transcript_transformations: {
+      transformation_outputs: {
         Row: {
           created_at: string
           id: number
-          input_id: number | null
+          prompt_id: number | null
           note_id: number | null
           transformed_text: string | null
           user_id: string | null
@@ -91,7 +148,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: number
-          input_id?: number | null
+          prompt_id?: number | null
           note_id?: number | null
           transformed_text?: string | null
           user_id?: string | null
@@ -99,7 +156,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
-          input_id?: number | null
+          prompt_id?: number | null
           note_id?: number | null
           transformed_text?: string | null
           user_id?: string | null
@@ -107,9 +164,9 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "public_transcript_transformations_input_id_fkey"
-            columns: ["input_id"]
+            columns: ["prompt_id"]
             isOneToOne: false
-            referencedRelation: "transcript_transformation_inputs"
+            referencedRelation: "transformation_prompts"
             referencedColumns: ["id"]
           },
           {
