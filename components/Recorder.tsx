@@ -150,9 +150,9 @@ const Recorder = ({ userId }: { userId: string }) => {
   const renderStartStopRecordingButton = () => (
     <button
       onClick={handleRecordClick}
-      className={`flex items-center px-6 py-4 mx-auto border border-gray-300 hover:border-${isRunning ? "error-50" : "orange-500"} rounded-full`}
+      className={`flex items-center px-6 py-4 mx-auto border border-gray-300 hover:border-orange-500 rounded-full`}
     >
-      <span className={`block rounded-full bg-${isRunning ? "error-50" : "orange-500"} mr-2 border-white border-[1px]`}>
+      <span className={`block rounded-full bg-${isRunning ? "error-50 bg-orange-500" : "orange-500 border-white"} mr-2 border-[1px]`}>
         <span className={`block w-3 h-3 m-3 ${!isRunning && "rounded-full"} bg-white`}></span>
       </span>
       <span className="text-2xl">{isRunning ? "Stop recording" : "Record a note"}</span>
