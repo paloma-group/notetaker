@@ -59,6 +59,9 @@ const Recorder = ({ userId }: { userId: string }) => {
     mediaRecorder.stop();
     setIsRunning(false);
     setIsProcessing(true);
+
+    // Stop all media tracks
+    mediaRecorder?.stream.getTracks().forEach(track => track.stop());
   }
 
   useEffect(() => {
