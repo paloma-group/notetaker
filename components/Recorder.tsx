@@ -1,17 +1,23 @@
 "use client";
 
-import { useEffect, useState, startTransition } from "react";
+import { useEffect, useState, useRef, startTransition } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/utils/date/formatDate";
 import { createNote } from "@/utils/notes/create-note";
 
 const Recorder = ({ userId }: { userId: string }) => {
   const { push, refresh } = useRouter();
 
-  const [title, setTitle] = useState("Record your voice note");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const audioContext = useRef<AudioContext | null>(null);
+  const analyser = useRef<AnalyserNode | null>(null);
+  const dataArray = useRef<Uint8Array | null>(null);
 
-  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [title, setTitle] = useState("Record your voice note");
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
 
@@ -44,7 +50,7 @@ const Recorder = ({ userId }: { userId: string }) => {
       setMinutes(0);
       setSeconds(0);
     };
-    setMediaRecorder(recorder as any);
+    setMediaRecorder(recorder);
     recorder.start();
   }
 
@@ -52,7 +58,66 @@ const Recorder = ({ userId }: { userId: string }) => {
     // @ts-ignore
     mediaRecorder.stop();
     setIsRunning(false);
+    setIsProcessing(true);
   }
+
+  useEffect(() => {
+    if (canvasRef.current && mediaRecorder && mediaRecorder.stream) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        audioContext.current = new AudioContext();
+        analyser.current = audioContext.current.createAnalyser();
+        const source = audioContext.current.createMediaStreamSource(mediaRecorder.stream);
+        source.connect(analyser.current);
+        analyser.current.fftSize = 256;
+        const bufferLength = analyser.current.frequencyBinCount;
+        dataArray.current = new Uint8Array(bufferLength);
+
+        // Initialize an array to store smoothed amplitude values
+        const smoothedAmplitudes = new Array(bufferLength).fill(0);
+
+        const draw = () => {
+          if (ctx && analyser.current && dataArray.current) {
+            const WIDTH = canvas.width;
+            const HEIGHT = canvas.height;
+
+            analyser.current.getByteFrequencyData(dataArray.current);
+
+            // Apply smoothing to amplitude values
+            for (let i = 0; i < bufferLength; i++) {
+              smoothedAmplitudes[i] = 0.9 * smoothedAmplitudes[i] + 0.1 * dataArray.current[i];
+            }
+
+            const maxAmplitude = Math.max(...smoothedAmplitudes);
+            const centerLine = HEIGHT / 2;
+            const barWidth = 2;
+
+            ctx.fillStyle = "rgb(243, 244, 246)";
+            ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+            for (let i = 0; i < bufferLength; i++) {
+              const amplitude = smoothedAmplitudes[i];
+              const barHeight = ((amplitude / maxAmplitude) * HEIGHT / 2) || 1;
+
+              ctx.fillStyle = "rgb(249, 115, 22)";
+              ctx.fillRect(WIDTH / 2 + i * (barWidth + 1), centerLine - barHeight / 2, barWidth, barHeight);
+              ctx.fillRect(WIDTH / 2 - (i + 1) * (barWidth + 1), centerLine - barHeight / 2, barWidth, barHeight);
+            }
+
+            // Shift the canvas to the left
+            ctx.drawImage(canvas, -1, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
+
+            // Clear the rightmost column
+            ctx.clearRect(WIDTH - 1, 0, 1, HEIGHT);
+          }
+          requestAnimationFrame(draw);
+        };
+
+        draw();
+      }
+    }
+  }, [mediaRecorder]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -73,29 +138,44 @@ const Recorder = ({ userId }: { userId: string }) => {
   }, [isRunning]);
 
   const handleRecordClick = () => {
-    if (title === "Record your voice note") {
-      setTitle("Recording...");
+    if (!isRunning) {
+      setTitle(formatDate(new Date()));
       startRecording();
-    } else if (title === "Recording...") {
-      setTitle("Processing...");
+    } else if (isRunning) {
+      setTitle("Generating transcription...");
       stopRecording();
     }
   };
 
+  const renderStartStopRecordingButton = () => (
+    <button
+      onClick={handleRecordClick}
+      className={`flex items-center px-6 py-4 mx-auto border border-gray-300 hover:border-orange-500 rounded-full`}
+    >
+      <span className={`block rounded-full bg-${isRunning ? "error-50 bg-orange-500" : "orange-500 border-white"} mr-2 border-[1px]`}>
+        <span className={`block w-3 h-3 m-3 ${!isRunning && "rounded-full"} bg-white`}></span>
+      </span>
+      <span className="text-2xl">{isRunning ? "Stop recording" : "Record a note"}</span>
+    </button>
+  );
+
+  if(!isRunning && !isProcessing) {
+    return(
+      <div className="h-dvh flex flex-col items-center justify-center -mt-36">
+        {renderStartStopRecordingButton()}
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="mt-32 text-3xl font-bold text-center">{title}</h2>
-      <div className="text-5xl font-bold text-center my-16">
+      <div className="text-5xxl font-400  text-center mt-32">
         {minutes < 10 ? `0${minutes}` : minutes}:
         {seconds < 10 ? `0${seconds}` : seconds}
       </div>
-      <button
-        className={`block w-16 h-16 mx-auto text-white font-bold rounded-full ${isRunning ? "bg-black hover:bg-gray-800" : "bg-orange-500 hover:bg-orange-400"}`}
-        onClick={handleRecordClick}
-        disabled={title === "Processing"}
-      >
-        {isRunning ? "STOP" : "REC"}
-      </button>
+      <p className="text-base font-normal text-center mx-auto mt-4">{title}</p>
+      {!isProcessing && (<canvas ref={canvasRef} height={40} className="my-4 w-80 mx-auto"></canvas>)}
+      {!isProcessing && renderStartStopRecordingButton()}
     </div>
   );
 };
