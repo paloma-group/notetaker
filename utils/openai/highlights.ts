@@ -1,11 +1,15 @@
 export const highlights = async (
-  transcription: string | null,
-): Promise<{ title: string; highlights: string[]; keywords: string[] } | null> => {
+  transcription: string | null
+): Promise<{
+  title: string;
+  highlights: string[];
+  keywords: string[];
+} | null> => {
   try {
-    const response = await fetch("/api/transcriptionToHighlights", {
-      method: "POST",
+    const response = await fetch('/api/transcriptionToHighlights', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ transcription }),
     });

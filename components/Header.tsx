@@ -1,5 +1,5 @@
-import Link from "next/link";
-import AuthButton from "@/components/AuthButton";
+import Link from 'next/link';
+import AuthButton from '@/components/AuthButton';
 
 export default function Header({ children }: { children: React.ReactNode }) {
   return (

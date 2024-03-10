@@ -1,8 +1,8 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import Header from "@/components/Header";
-import NotesTable from "@/components/NotesTable";
-import Link from "next/link";
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
+import Header from '@/components/Header';
+import NotesTable from '@/components/NotesTable';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -15,13 +15,13 @@ export default async function Index() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/login");
+    return redirect('/login');
   }
 
   const { data: notes } = await supabase
-    .from("notes")
-    .select("id, title, note_tags ( tags ( name ) )")
-    .order("created_at", { ascending: false });
+    .from('notes')
+    .select('id, title, note_tags ( tags ( name ) )')
+    .order('created_at', { ascending: false });
 
   return (
     <Header>

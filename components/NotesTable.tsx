@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Tables } from "@/types/supabase";
-import Link from "next/link";
+import { Tables } from '@/types/supabase';
+import Link from 'next/link';
 
 export type NoteTableView = {
   id: number;
