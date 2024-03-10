@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef, startTransition } from "react";
-import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
-import { formatDate } from "@/utils/date/formatDate";
-import { createNote } from "@/utils/notes/create-note";
+import { useEffect, useState, useRef, startTransition } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+import { formatDate } from '@/utils/date/formatDate';
+import { createNote } from '@/utils/notes/create-note';
 
 const Recorder = ({ userId }: { userId: string }) => {
   const { push, refresh } = useRouter();
@@ -14,8 +14,10 @@ const Recorder = ({ userId }: { userId: string }) => {
   const analyser = useRef<AnalyserNode | null>(null);
   const dataArray = useRef<Uint8Array | null>(null);
 
-  const [title, setTitle] = useState("Record your voice note");
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [title, setTitle] = useState('Record your voice note');
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null
+  );
   const [isRunning, setIsRunning] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [seconds, setSeconds] = useState(0);
@@ -23,7 +25,9 @@ const Recorder = ({ userId }: { userId: string }) => {
 
   async function startRecording() {
     setIsRunning(true);
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
     const recorder = new MediaRecorder(stream);
     let audioChunks: any = [];
 
@@ -32,7 +36,7 @@ const Recorder = ({ userId }: { userId: string }) => {
     };
 
     recorder.onstop = async () => {
-      const blob = new Blob(audioChunks, { type: "audio/mp3" });
+      const blob = new Blob(audioChunks, { type: 'audio/mp3' });
       const note = await createNote({
         supabase: createClient(),
         userId,
@@ -46,7 +50,7 @@ const Recorder = ({ userId }: { userId: string }) => {
         });
       }
 
-      setTitle("Record your voice note");
+      setTitle('Record your voice note');
       setMinutes(0);
       setSeconds(0);
     };
@@ -61,17 +65,19 @@ const Recorder = ({ userId }: { userId: string }) => {
     setIsProcessing(true);
 
     // Stop all media tracks
-    mediaRecorder?.stream.getTracks().forEach(track => track.stop());
+    mediaRecorder?.stream.getTracks().forEach((track) => track.stop());
   }
 
   useEffect(() => {
     if (canvasRef.current && mediaRecorder && mediaRecorder.stream) {
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
       if (ctx) {
         audioContext.current = new AudioContext();
         analyser.current = audioContext.current.createAnalyser();
-        const source = audioContext.current.createMediaStreamSource(mediaRecorder.stream);
+        const source = audioContext.current.createMediaStreamSource(
+          mediaRecorder.stream
+        );
         source.connect(analyser.current);
         analyser.current.fftSize = 256;
         const bufferLength = analyser.current.frequencyBinCount;
@@ -89,23 +95,34 @@ const Recorder = ({ userId }: { userId: string }) => {
 
             // Apply smoothing to amplitude values
             for (let i = 0; i < bufferLength; i++) {
-              smoothedAmplitudes[i] = 0.9 * smoothedAmplitudes[i] + 0.1 * dataArray.current[i];
+              smoothedAmplitudes[i] =
+                0.9 * smoothedAmplitudes[i] + 0.1 * dataArray.current[i];
             }
 
             const maxAmplitude = Math.max(...smoothedAmplitudes);
             const centerLine = HEIGHT / 2;
             const barWidth = 2;
 
-            ctx.fillStyle = "rgb(243, 244, 246)";
+            ctx.fillStyle = 'rgb(243, 244, 246)';
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
             for (let i = 0; i < bufferLength; i++) {
               const amplitude = smoothedAmplitudes[i];
-              const barHeight = ((amplitude / maxAmplitude) * HEIGHT / 2) || 1;
+              const barHeight = ((amplitude / maxAmplitude) * HEIGHT) / 2 || 1;
 
-              ctx.fillStyle = "rgb(249, 115, 22)";
-              ctx.fillRect(WIDTH / 2 + i * (barWidth + 1), centerLine - barHeight / 2, barWidth, barHeight);
-              ctx.fillRect(WIDTH / 2 - (i + 1) * (barWidth + 1), centerLine - barHeight / 2, barWidth, barHeight);
+              ctx.fillStyle = 'rgb(249, 115, 22)';
+              ctx.fillRect(
+                WIDTH / 2 + i * (barWidth + 1),
+                centerLine - barHeight / 2,
+                barWidth,
+                barHeight
+              );
+              ctx.fillRect(
+                WIDTH / 2 - (i + 1) * (barWidth + 1),
+                centerLine - barHeight / 2,
+                barWidth,
+                barHeight
+              );
             }
 
             // Shift the canvas to the left
@@ -145,7 +162,7 @@ const Recorder = ({ userId }: { userId: string }) => {
       setTitle(formatDate(new Date()));
       startRecording();
     } else if (isRunning) {
-      setTitle("Generating transcription...");
+      setTitle('Generating transcription...');
       stopRecording();
     }
   };
@@ -155,19 +172,25 @@ const Recorder = ({ userId }: { userId: string }) => {
       onClick={handleRecordClick}
       className={`flex items-center px-6 py-4 mx-auto border border-gray-300 hover:border-orange-500 rounded-full`}
     >
-      <span className={`block rounded-full bg-${isRunning ? "error-50 bg-orange-500" : "orange-500 border-white"} mr-2 border-[1px]`}>
-        <span className={`block w-3 h-3 m-3 ${!isRunning && "rounded-full"} bg-white`}></span>
+      <span
+        className={`block rounded-full bg-${isRunning ? 'error-50 bg-orange-500' : 'orange-500 border-white'} mr-2 border-[1px]`}
+      >
+        <span
+          className={`block w-3 h-3 m-3 ${!isRunning && 'rounded-full'} bg-white`}
+        ></span>
       </span>
-      <span className="text-2xl">{isRunning ? "Stop recording" : "Record a note"}</span>
+      <span className="text-2xl">
+        {isRunning ? 'Stop recording' : 'Record a note'}
+      </span>
     </button>
   );
 
-  if(!isRunning && !isProcessing) {
-    return(
+  if (!isRunning && !isProcessing) {
+    return (
       <div className="h-dvh flex flex-col items-center justify-center -mt-36">
         {renderStartStopRecordingButton()}
       </div>
-    )
+    );
   }
 
   return (
@@ -177,7 +200,13 @@ const Recorder = ({ userId }: { userId: string }) => {
         {seconds < 10 ? `0${seconds}` : seconds}
       </div>
       <p className="text-base font-normal text-center mx-auto mt-4">{title}</p>
-      {!isProcessing && (<canvas ref={canvasRef} height={40} className="my-4 w-80 mx-auto"></canvas>)}
+      {!isProcessing && (
+        <canvas
+          ref={canvasRef}
+          height={40}
+          className="my-4 w-80 mx-auto"
+        ></canvas>
+      )}
       {!isProcessing && renderStartStopRecordingButton()}
     </div>
   );

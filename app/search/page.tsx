@@ -1,8 +1,8 @@
-import AuthButton from "@/components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import Header from "@/components/Header";
-import NotesTable from "@/components/NotesTable";
+import AuthButton from '@/components/AuthButton';
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
+import Header from '@/components/Header';
+import NotesTable from '@/components/NotesTable';
 
 export default async function Search({
   searchParams,
@@ -16,23 +16,23 @@ export default async function Search({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/login");
+    return redirect('/login');
   }
 
   const q = searchParams.q;
 
   const { data: notes, error } = await supabase
-    .from("notes")
+    .from('notes')
     .select(
       `
       id,
       title,
       note_tags!inner(tags!inner(name))
-    `,
+    `
     )
     .textSearch(`note_tags.tags.name`, `${q}`, {
-      type: "websearch",
-      config: "english",
+      type: 'websearch',
+      config: 'english',
     });
 
   return (

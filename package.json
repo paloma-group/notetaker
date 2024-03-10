@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "prettier:write": "prettier --write ."
   },
   "dependencies": {
     "@headlessui/react": "^1.7.18",
@@ -27,6 +28,7 @@
     "@types/react-dom": "18.2.18",
     "@types/uuid": "^9.0.8",
     "encoding": "^0.1.13",
+    "prettier": "^3.2.5",
     "supabase": "^1.145.4"
   }
 }

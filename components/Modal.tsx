@@ -1,16 +1,24 @@
-import { Fragment, useState, useEffect, Dispatch, SetStateAction } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { type NoteWithTransforms, TTPrompt } from "@/components/Note";
-import { createClient } from "@/utils/supabase/client";
-import { transform } from "@/utils/openai/transform";
+import { Fragment, useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { type NoteWithTransforms, TTPrompt } from '@/components/Note';
+import { createClient } from '@/utils/supabase/client';
+import { transform } from '@/utils/openai/transform';
 
 // Define a function to render paragraphs from text
 const renderParagraphs = (text: string): JSX.Element[] => {
   const { text: transformationText } = JSON.parse(text);
-  const parsedTransformation = Array.isArray(transformationText) ? transformationText : transformationText.split('\n');
+  const parsedTransformation = Array.isArray(transformationText)
+    ? transformationText
+    : transformationText.split('\n');
 
   return parsedTransformation.map((paragraph: string, index: number) =>
-    paragraph ? <p key={index} className='text-sm text-gray-500'>{paragraph}</p> : <br key={index} />
+    paragraph ? (
+      <p key={index} className="text-sm text-gray-500">
+        {paragraph}
+      </p>
+    ) : (
+      <br key={index} />
+    )
   );
 };
 
@@ -27,16 +35,16 @@ export default function Modal({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!open) return;
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Find transformation
     const transformedText = note.transformation_outputs.find(
-      (t) => t?.transformation_prompts?.type === title,
+      (t) => t?.transformation_prompts?.type === title
     )?.transformed_text;
 
     if (!transformedText) {
@@ -47,10 +55,12 @@ export default function Modal({
         if (!text) return;
 
         const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
         const { data, error } = await supabase
-          .from("transformation_outputs")
+          .from('transformation_outputs')
           .insert({
             prompt_id: prompt.id,
             note_id: note.id,
@@ -66,11 +76,11 @@ export default function Modal({
           // Hacky way so we don't have to refetch... TODO: find a better way
           note.transformation_outputs.push(data);
           setText(data.transformed_text);
-          setIsLoading(false)
+          setIsLoading(false);
         }
       })();
     } else {
-      setIsLoading(false)
+      setIsLoading(false);
       setText(transformedText);
     }
   }, [open]);
@@ -113,13 +123,11 @@ export default function Modal({
                       </Dialog.Title>
                     )}
                     <div className="mt-2">
-                    {
-                      isLoading ? (
-                        <p className='text-sm text-gray-500'>Loading...</p>
+                      {isLoading ? (
+                        <p className="text-sm text-gray-500">Loading...</p>
                       ) : (
                         renderParagraphs(text)
-                      )
-                    }
+                      )}
                     </div>
                   </div>
                 </div>

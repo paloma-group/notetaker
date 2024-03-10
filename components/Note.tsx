@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Tables } from "@/types/supabase";
-import { useState } from "react";
-import Modal from "@/components/Modal";
+import { Tables } from '@/types/supabase';
+import { useState } from 'react';
+import Modal from '@/components/Modal';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -10,7 +10,7 @@ const renderHighlights = (text: string | null): JSX.Element[] => {
     return [];
   }
 
-  return text.split("\n").map((highlight, index) => (
+  return text.split('\n').map((highlight, index) => (
     <li key={index} className="my-4">
       {highlight}
     </li>
