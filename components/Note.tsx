@@ -1,11 +1,10 @@
 'use client';
 
-import { CopyToClipboardButton } from '@/components/CopyToClipboardButton';
 import Modal from '@/components/Modal';
 import Transformation from './Transformation';
 import { formatDate } from '@/utils/date/formatDate';
-import { parseTransformedText } from '@/utils/notes/parse-transformed-text';
 import { useState } from 'react';
+import { extractRawTextFromTranscript } from '@/utils/notes/transcript';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -128,7 +127,9 @@ export default function Note({
                       created_at={transformation.created_at}
                       text={
                         transformation.transformed_text &&
-                        parseTransformedText(transformation.transformed_text)
+                        extractRawTextFromTranscript(
+                          transformation.transformed_text
+                        )
                       }
                     />
                   }
