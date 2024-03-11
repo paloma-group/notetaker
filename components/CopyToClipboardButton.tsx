@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { FaCheck, FaRegCopy, FaX } from 'react-icons/fa6';
+
+import { PiCheck, PiCopy, PiX } from 'react-icons/pi';
+import { Tooltip } from 'react-tooltip';
 
 interface Props {
   text: string | null;
@@ -10,11 +12,11 @@ type CopyState = 'pending' | 'error' | 'copied';
 const CopyIcon = ({ state }: { state: CopyState }) => {
   switch (state) {
     case 'error':
-      return <FaX className={'text-red-500'} />;
+      return <PiX className={'text-red-500'} />;
     case 'copied':
-      return <FaCheck className={'text-green-500'} />;
+      return <PiCheck className={'text-green-500'} />;
     default:
-      return <FaRegCopy />;
+      return <PiCopy />;
   }
 };
 
@@ -37,8 +39,17 @@ export const CopyToClipboardButton = ({ text }: Props) => {
   };
 
   return (
-    <button onClick={state === 'pending' ? handleCopyClick : undefined}>
+    <button
+      onClick={state === 'pending' ? handleCopyClick : undefined}
+      data-tooltip-id="clipboard-tooltip"
+      data-tooltip-content="Copied!"
+    >
       <CopyIcon state={state} />
+      <Tooltip
+        id="clipboard-tooltip"
+        place="left"
+        isOpen={state === 'copied'}
+      />
     </button>
   );
 };
