@@ -1,15 +1,25 @@
-import { Fragment, useState, useEffect, Dispatch, SetStateAction } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { CopyToClipboardButton } from '@/components/CopyToClipboardButton';
 import { type NoteWithTransforms, TTPrompt } from '@/components/Note';
-import { createClient } from '@/utils/supabase/client';
+import {
+  extractRawTextFromTranscript,
+  extractTranscriptComponents,
+} from '@/utils/notes/transcript';
 import { transform } from '@/utils/openai/transform';
+import { createClient } from '@/utils/supabase/client';
+import { Dialog, Transition } from '@headlessui/react';
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
+
+interface Props {
+  title?: string;
+  note: NoteWithTransforms;
+  prompt?: TTPrompt;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
 
 // Define a function to render paragraphs from text
-const renderParagraphs = (text: string): JSX.Element[] => {
-  const { text: transformationText } = JSON.parse(text);
-  const parsedTransformation = Array.isArray(transformationText)
-    ? transformationText
-    : transformationText.split('\n');
+const renderParagraphs = (text: string) => {
+  const parsedTransformation = extractTranscriptComponents(text);
 
   return parsedTransformation.map((paragraph: string, index: number) =>
     paragraph ? (
@@ -28,13 +38,7 @@ export default function Modal({
   prompt,
   open = false,
   setOpen,
-}: {
-  title?: string;
-  note: NoteWithTransforms;
-  prompt?: TTPrompt;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-}) {
+}: Props) {
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -117,9 +121,16 @@ export default function Modal({
                     {title && (
                       <Dialog.Title
                         as="h3"
-                        className="text-base font-semibold leading-6 text-gray-900"
+                        className="relative text-base font-semibold leading-6 text-gray-900 space-x-4"
                       >
                         {title}
+                        {!isLoading && (
+                          <div className={'absolute top-0 right-0'}>
+                            <CopyToClipboardButton
+                              text={extractRawTextFromTranscript(text)}
+                            />
+                          </div>
+                        )}
                       </Dialog.Title>
                     )}
                     <div className="mt-2">
