@@ -1,7 +1,6 @@
+import Note from '@/components/Note';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import Header from '@/components/Header';
-import Note from '@/components/Note';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -40,9 +39,5 @@ export default async function Recording({
     .from('transformation_prompts')
     .select(`id, prompt, type`);
 
-  return (
-    <Header>
-      {note && prompts ? <Note note={note} prompts={prompts} /> : null}
-    </Header>
-  );
+  return <>{note && prompts ? <Note note={note} prompts={prompts} /> : null}</>;
 }

@@ -1,8 +1,6 @@
-import AuthButton from '@/components/AuthButton';
+import Recorder from '@/components/Recorder';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import Header from '@/components/Header';
-import Recorder from '@/components/Recorder';
 
 export default async function Record() {
   const supabase = createClient();
@@ -15,9 +13,5 @@ export default async function Record() {
     return redirect('/login');
   }
 
-  return (
-    <Header>
-      <Recorder userId={user.id} />
-    </Header>
-  );
+  return <Recorder userId={user.id} />;
 }
