@@ -55,7 +55,7 @@ const Recorder = ({ userId }: { userId: string }) => {
       setSeconds(0);
     };
     setMediaRecorder(recorder);
-    recorder.start();
+    recorder.start(1000);
   }
 
   function stopRecording() {
