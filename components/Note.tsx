@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { CopyToClipboardButton } from '@/components/CopyToClipboardButton';
 import Modal from '@/components/Modal';
 import Transformation from './Transformation';
 import { formatDate } from '@/utils/date/formatDate';
 import { parseTransformedText } from '@/utils/notes/parse-transformed-text';
+import { useState } from 'react';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
