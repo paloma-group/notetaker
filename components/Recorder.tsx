@@ -5,6 +5,8 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/utils/date/formatDate';
 import { createNote } from '@/utils/notes/create-note';
+import Image from 'next/image';
+import spinner from '../assets/spinner.svg';
 
 const Recorder = ({ userId }: { userId: string }) => {
   const { push, refresh } = useRouter();
@@ -142,7 +144,7 @@ const Recorder = ({ userId }: { userId: string }) => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (isRunning) {
+    if (isRunning && mediaRecorder) {
       interval = setInterval(() => {
         setSeconds((prevSeconds) => {
           if (prevSeconds === 59) {
@@ -155,7 +157,7 @@ const Recorder = ({ userId }: { userId: string }) => {
     }
 
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, mediaRecorder]);
 
   const handleRecordClick = () => {
     if (!isRunning) {
@@ -200,6 +202,9 @@ const Recorder = ({ userId }: { userId: string }) => {
         {seconds < 10 ? `0${seconds}` : seconds}
       </div>
       <p className="text-base font-normal text-center mx-auto mt-4">{title}</p>
+      {isRunning && !mediaRecorder && (
+        <Image className="m-auto w-10 mt-20" src={spinner} alt={'Loading'} />
+      )}
       {!isProcessing && (
         <canvas
           ref={canvasRef}
