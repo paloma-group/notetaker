@@ -67,14 +67,16 @@ export default function Modal({
             transformed_text: text,
             user_id: note.user_id,
           })
-          .select()
+          .select(
+            'transformed_text, transformation_prompts ( type ), created_at'
+          )
           .limit(1)
           .single();
 
         if (data?.transformed_text) {
           // @ts-ignore
           // Hacky way so we don't have to refetch... TODO: find a better way
-          note.transformation_outputs.push(data);
+          note.transformation_outputs.unshift(data);
           setText(data.transformed_text);
           setIsLoading(false);
         }
