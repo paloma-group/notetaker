@@ -1,8 +1,9 @@
-import AuthButton from '@/components/AuthButton';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
 import NotesTable from '@/components/NotesTable';
+import { createClient } from '@/utils/supabase/server';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { PiCaretLeft } from 'react-icons/pi';
 
 export default async function Search({
   searchParams,
@@ -30,15 +31,18 @@ export default async function Search({
       note_tags!inner(tags!inner(name))
     `
     )
-    .textSearch(`note_tags.tags.name`, `${q}`, {
+    .textSearch(`fts_query`, `${q}`, {
       type: 'websearch',
       config: 'english',
     });
 
   return (
-    <Header>
+    <Header query={q}>
+      <Link href={'/'} className={'flex items-center p-4'}>
+        <PiCaretLeft /> All notes
+      </Link>
       <div className="mt-32">
-        <NotesTable notes={notes} />
+        <NotesTable notes={notes} query={q} />
       </div>
     </Header>
   );

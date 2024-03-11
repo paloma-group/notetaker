@@ -1,6 +1,5 @@
 'use client';
 
-import { Tables } from '@/types/supabase';
 import Link from 'next/link';
 
 export type NoteTableView = {
@@ -13,15 +12,26 @@ export type NoteTableView = {
   }[];
 };
 
-export default function NotesTable({
-  notes,
-}: {
+interface Props {
   notes?: NoteTableView[] | null;
-}) {
+  query?: string;
+}
+
+export default function NotesTable({ notes, query }: Props) {
   return (
-    <>
+    <div
+      className={
+        'grid gap-5 p-5 lg:p-10 bg-gray-200 rounded-3xl mb-4 lg:mb-8 -mt-32'
+      }
+    >
+      {query && (
+        <div>
+          <p>Search results</p>
+          <h6 className={'text-4xl'}>“{query}”</h6>
+        </div>
+      )}
       {!!notes?.length ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10 p-5 lg:p-10 bg-gray-200 rounded-3xl mb-4 lg:mb-8 -mt-32">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10">
           {notes.map((note, i) => (
             <Link
               key={note.id}
@@ -49,6 +59,6 @@ export default function NotesTable({
       ) : (
         <p className="text-center text-xl">No notes to display</p>
       )}
-    </>
+    </div>
   );
 }
