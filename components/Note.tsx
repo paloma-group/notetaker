@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Modal from '@/components/Modal';
 import Transformation from './Transformation';
 import { formatDate } from '@/utils/date/formatDate';
+import { parseTransformedText } from '@/utils/notes/parse-transformed-text';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -117,7 +118,7 @@ export default function Note({
                 {renderHighlights(note.highlights)}
               </ul>
             </div>
-            {note?.transformation_outputs?.length &&
+            {!!note?.transformation_outputs?.length &&
               note.transformation_outputs.map((transformation, i) => (
                 <div key={`transformation-${i}`}>
                   {
@@ -126,7 +127,7 @@ export default function Note({
                       created_at={transformation.created_at}
                       text={
                         transformation.transformed_text &&
-                        JSON.parse(transformation.transformed_text).text
+                        parseTransformedText(transformation.transformed_text)
                       }
                     />
                   }
