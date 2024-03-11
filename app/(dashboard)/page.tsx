@@ -1,8 +1,7 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import Header from '@/components/Header';
 import NotesTable from '@/components/NotesTable';
+import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -24,7 +23,7 @@ export default async function Index() {
     .order('created_at', { ascending: false });
 
   return (
-    <Header>
+    <>
       <div className="h-dvh flex flex-col items-center justify-center -mt-36">
         <div className="">
           <Link
@@ -39,6 +38,6 @@ export default async function Index() {
         </div>
       </div>
       <NotesTable notes={notes} />
-    </Header>
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import Header from '@/components/Header';
 import NotesTable from '@/components/NotesTable';
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
@@ -37,13 +36,13 @@ export default async function Search({
     });
 
   return (
-    <Header query={q}>
-      <Link href={'/'} className={'flex items-center p-4'}>
-        <PiCaretLeft /> All notes
-      </Link>
-      <div className="mt-32">
-        <NotesTable notes={notes} query={q} />
-      </div>
-    </Header>
+    <>
+    <Link href={'/'} className={'flex items-center p-4'}>
+      <PiCaretLeft /> All notes
+    </Link>
+  <div className="mt-32">
+    <NotesTable notes={notes} query={q} />
+  </div>
+    </>
   );
 }
