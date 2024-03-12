@@ -13,15 +13,15 @@ export default function Transformation({
   created_at?: string | null;
 }) {
   return (
-    <div className="border-t border-white py-6">
+    <div className="border-t border-white py-6 grid gap-4">
       <div className={'flex justify-between'}>
         <h3 className="text-xl font-semibold">{title}</h3>
         {text && <CopyToClipboardButton text={text} />}
       </div>
       {created_at && (
-        <h4 className="text-sm pt-4">{formatDate(new Date(created_at))}</h4>
+        <h4 className="text-sm">{formatDate(new Date(created_at))}</h4>
       )}
-      <p className="pt-4">{text}</p>
+      <p>{text}</p>
     </div>
   );
 }

@@ -32,6 +32,7 @@ export type NoteWithTransforms = {
     } | null;
   }[];
   transformation_outputs: {
+    id: number;
     transformed_text: string | null;
     transformation_prompts: {
       type: string;
@@ -118,23 +119,20 @@ export default function Note({
                 {renderHighlights(note.highlights)}
               </ul>
             </div>
-            {!!note?.transformation_outputs?.length &&
-              note.transformation_outputs.map((transformation, i) => (
-                <div key={`transformation-${i}`}>
-                  {
-                    <Transformation
-                      title={transformation.transformation_prompts?.type}
-                      created_at={transformation.created_at}
-                      text={
-                        transformation.transformed_text &&
-                        extractRawTextFromTranscript(
-                          transformation.transformed_text
-                        )
-                      }
-                    />
+            {note?.transformation_outputs?.map((transformation) => (
+              <div key={transformation.id}>
+                <Transformation
+                  title={transformation.transformation_prompts?.type}
+                  created_at={transformation.created_at}
+                  text={
+                    transformation.transformed_text &&
+                    extractRawTextFromTranscript(
+                      transformation.transformed_text
+                    )
                   }
-                </div>
-              ))}
+                />
+              </div>
+            ))}
             <Transformation
               title="Transcript"
               created_at={note.created_at}
