@@ -12,7 +12,7 @@ interface Props {
   title?: string | null;
   text?: string | null;
   created_at?: string | null;
-  action?: (data: FormData) => Promise<void>;
+  action?: (data: FormData) => Promise<any>;
 }
 
 const EditableText = ({
