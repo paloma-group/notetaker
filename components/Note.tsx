@@ -1,8 +1,10 @@
 'use client';
 
-import { CopyToClipboardButton } from '@/components/CopyToClipboardButton';
 import Modal from '@/components/Modal';
+import Transformation from './Transformation';
+import { formatDate } from '@/utils/date/formatDate';
 import { useState } from 'react';
+import { extractRawTextFromTranscript } from '@/utils/notes/transcript';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -30,10 +32,12 @@ export type NoteWithTransforms = {
     } | null;
   }[];
   transformation_outputs: {
+    id: number;
     transformed_text: string | null;
     transformation_prompts: {
       type: string;
     } | null;
+    created_at: string | null;
   }[];
 };
 
@@ -74,13 +78,11 @@ export default function Note({
           </ul>
         </div>
         <div className="grow">
-          <div className="border-b border-white pb-6">
+          <div>
             <h2 className="text-4xl font-semibold mb-3">
               {note?.title ? note.title : `Note #${note.id}`}
             </h2>
-            <p className="text-sm">
-              {new Date(note.created_at).toDateString()}
-            </p>
+            <p className="text-sm">{formatDate(new Date(note.created_at))}</p>
             {note?.note_tags?.length ? (
               <div className="flex mt-4">
                 {note.note_tags.map((t, i) => (
@@ -93,7 +95,7 @@ export default function Note({
                 ))}
               </div>
             ) : null}
-            <div className="mt-8 p-8 rounded-xl bg-gray-100">
+            <div className="my-8 p-8 rounded-xl bg-gray-100">
               <h3 className="text-lg mb-3">Transform note</h3>
               <div className="flex flex-wrap">
                 {!!prompts?.length &&
@@ -110,18 +112,32 @@ export default function Note({
               </div>
             </div>
           </div>
-          <div className="pt-6">
+          <div>
             <div className="block md:hidden mb-8">
               <h3 className="text-xl font-semibold">Highlights</h3>
               <ul className="list-disc pl-4">
                 {renderHighlights(note.highlights)}
               </ul>
             </div>
-            <div className={'flex justify-between'}>
-              <h3 className="text-xl font-semibold">Transcript</h3>
-              <CopyToClipboardButton text={note.transcript} />
-            </div>
-            <p className="my-4">{note.transcript}</p>
+            {note?.transformation_outputs?.map((transformation) => (
+              <div key={transformation.id}>
+                <Transformation
+                  title={transformation.transformation_prompts?.type}
+                  created_at={transformation.created_at}
+                  text={
+                    transformation.transformed_text &&
+                    extractRawTextFromTranscript(
+                      transformation.transformed_text
+                    )
+                  }
+                />
+              </div>
+            ))}
+            <Transformation
+              title="Transcript"
+              created_at={note.created_at}
+              text={note.transcript}
+            />
           </div>
         </div>
       </div>
