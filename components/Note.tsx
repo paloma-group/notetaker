@@ -68,9 +68,13 @@ export default function Note({
     setModalOpen(true);
   };
 
-  return note ? (
+  if (!note) {
+    return <p>No note to display</p>;
+  }
+
+  return (
     <>
-      <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl mb-16">
+      <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl">
         <div className="hidden md:block self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
           <h3 className="text-xl font-semibold">Highlights</h3>
           <ul className="list-disc pl-4">
@@ -80,7 +84,7 @@ export default function Note({
         <div className="grow">
           <div>
             <h2 className="text-4xl font-semibold mb-3">
-              {note?.title ? note.title : `Note #${note.id}`}
+              {note?.title || `Note #${note.id}`}
             </h2>
             <p className="text-sm">{formatDate(new Date(note.created_at))}</p>
             {note?.note_tags?.length ? (
@@ -149,7 +153,5 @@ export default function Note({
         prompt={prompt}
       />
     </>
-  ) : (
-    <p>No note to display</p>
   );
 }
