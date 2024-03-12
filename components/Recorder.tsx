@@ -179,7 +179,7 @@ const Recorder = ({ userId }: { userId: string }) => {
         disabled={disabled}
       >
         <span
-          className={`block rounded-full bg-${isRunning ? 'error-50 bg-orange-500' : 'orange-500 border-white'} mr-2 border-[1px]`}
+          className={`block rounded-full ${isRunning ? 'bg-error-50' : 'bg-orange-500 border-white'} mr-2 border-[1px]`}
         >
           <span
             className={`block w-3 h-3 m-3 ${!isRunning && 'rounded-full'} bg-white`}
