@@ -21,6 +21,9 @@ module.exports = {
         '5xxl': ['56px', '28px'],
       },
     },
+    container: {
+      center: true,
+    },
   },
   plugins: [],
 };

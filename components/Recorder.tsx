@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState, useRef, startTransition } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
 import { formatDate } from '@/utils/date/formatDate';
 import { createNote } from '@/utils/notes/create-note';
 import Image from 'next/image';
 import spinner from '../assets/spinner.svg';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+import { startTransition, useEffect, useRef, useState } from 'react';
 
 const Recorder = ({ userId }: { userId: string }) => {
   const { push, refresh } = useRouter();
@@ -194,7 +194,7 @@ const Recorder = ({ userId }: { userId: string }) => {
 
   if (!isRunning && !isProcessing) {
     return (
-      <div className="h-dvh flex flex-col items-center justify-center -mt-36">
+      <div className="h-[70dvh] flex flex-col items-center justify-center">
         {renderStartStopRecordingButton()}
       </div>
     );

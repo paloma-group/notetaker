@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  .layout-container {
+    display: grid;
+    grid-template-rows: min-content 1fr;
+  }
+}
