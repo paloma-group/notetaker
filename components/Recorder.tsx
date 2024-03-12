@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState, useRef, startTransition } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
 import { formatDate } from '@/utils/date/formatDate';
 import { createNote } from '@/utils/notes/create-note';
+import Image from 'next/image';
+import spinner from '../assets/spinner.svg';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+import { startTransition, useEffect, useRef, useState } from 'react';
 
 const Recorder = ({ userId }: { userId: string }) => {
   const { push, refresh } = useRouter();
@@ -55,7 +57,7 @@ const Recorder = ({ userId }: { userId: string }) => {
       setSeconds(0);
     };
     setMediaRecorder(recorder);
-    recorder.start();
+    recorder.start(1000);
   }
 
   function stopRecording() {
@@ -142,7 +144,7 @@ const Recorder = ({ userId }: { userId: string }) => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (isRunning) {
+    if (isRunning && mediaRecorder) {
       interval = setInterval(() => {
         setSeconds((prevSeconds) => {
           if (prevSeconds === 59) {
@@ -155,7 +157,7 @@ const Recorder = ({ userId }: { userId: string }) => {
     }
 
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, mediaRecorder]);
 
   const handleRecordClick = () => {
     if (!isRunning) {
@@ -167,27 +169,32 @@ const Recorder = ({ userId }: { userId: string }) => {
     }
   };
 
-  const renderStartStopRecordingButton = () => (
-    <button
-      onClick={handleRecordClick}
-      className={`flex items-center px-6 py-4 mx-auto border border-gray-300 hover:border-orange-500 rounded-full`}
-    >
-      <span
-        className={`block rounded-full bg-${isRunning ? 'error-50 bg-orange-500' : 'orange-500 border-white'} mr-2 border-[1px]`}
+  const renderStartStopRecordingButton = () => {
+    const disabled = isRunning && !mediaRecorder;
+
+    return (
+      <button
+        onClick={handleRecordClick}
+        className={`flex items-center px-6 py-4 mx-auto border border-gray-300 rounded-full ${!disabled && 'hover:border-orange-500'}`}
+        disabled={disabled}
       >
         <span
-          className={`block w-3 h-3 m-3 ${!isRunning && 'rounded-full'} bg-white`}
-        ></span>
-      </span>
-      <span className="text-2xl">
-        {isRunning ? 'Stop recording' : 'Record a note'}
-      </span>
-    </button>
-  );
+          className={`block rounded-full ${isRunning ? 'bg-error-50' : 'bg-orange-500 border-white'} mr-2 border-[1px]`}
+        >
+          <span
+            className={`block w-3 h-3 m-3 ${!isRunning && 'rounded-full'} bg-white`}
+          ></span>
+        </span>
+        <span className="text-2xl">
+          {isRunning ? 'Stop recording' : 'Record a note'}
+        </span>
+      </button>
+    );
+  };
 
   if (!isRunning && !isProcessing) {
     return (
-      <div className="h-dvh flex flex-col items-center justify-center -mt-36">
+      <div className="h-[70dvh] flex flex-col items-center justify-center">
         {renderStartStopRecordingButton()}
       </div>
     );
@@ -200,6 +207,9 @@ const Recorder = ({ userId }: { userId: string }) => {
         {seconds < 10 ? `0${seconds}` : seconds}
       </div>
       <p className="text-base font-normal text-center mx-auto mt-4">{title}</p>
+      {isRunning && !mediaRecorder && (
+        <Image className="m-auto w-10 mt-20" src={spinner} alt={'Loading'} />
+      )}
       {!isProcessing && (
         <canvas
           ref={canvasRef}

@@ -24,10 +24,16 @@ export default async function Index() {
 
   return (
     <>
-      <div className="h-dvh flex flex-col items-center justify-center -mt-36">
-        <div className="">
-          <Recorder userId={user.id} />
-        </div>
+      <div className="h-[70dvh] flex flex-col items-center justify-center">
+        <Link
+          href="/record"
+          className="flex items-center px-6 py-4 border border-gray-300 hover:border-orange-500 rounded-full"
+        >
+          <span className="block rounded-full bg-orange-500 mr-2">
+            <span className="block w-3 h-3 m-3 rounded-full bg-white"></span>
+          </span>
+          <span className="text-2xl">Record a note</span>
+        </Link>
       </div>
       <NotesTable notes={notes} />
     </>

@@ -20,9 +20,7 @@ interface Props {
 export default function NotesTable({ notes, query }: Props) {
   return (
     <div
-      className={
-        'grid gap-5 p-5 lg:p-10 bg-gray-200 rounded-3xl mb-4 lg:mb-8 -mt-32'
-      }
+      className={'grid gap-5 p-5 lg:p-10 bg-gray-200 rounded-3xl mb-4 lg:mb-8'}
     >
       {query && (
         <div>

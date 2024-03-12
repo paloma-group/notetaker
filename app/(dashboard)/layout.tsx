@@ -1,9 +1,14 @@
 import Header from '@/components/Header';
 
-export default function AppLayout({
-  children, // will be a page or nested layout
-}: {
+interface Props {
   children: React.ReactNode;
-}) {
-  return <Header>{children}</Header>;
+}
+
+export default function AppLayout({ children }: Props) {
+  return (
+    <div className={'container min-h-svh layout-container'}>
+      <Header />
+      {children}
+    </div>
+  );
 }
