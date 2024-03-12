@@ -1,8 +1,8 @@
 'use client';
 
-import { Tables } from '@/types/supabase';
-import { useState } from 'react';
+import { CopyToClipboardButton } from '@/components/CopyToClipboardButton';
 import Modal from '@/components/Modal';
+import { useState } from 'react';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -117,7 +117,10 @@ export default function Note({
                 {renderHighlights(note.highlights)}
               </ul>
             </div>
-            <h3 className="text-xl font-semibold">Transcript</h3>
+            <div className={'flex justify-between'}>
+              <h3 className="text-xl font-semibold">Transcript</h3>
+              <CopyToClipboardButton text={note.transcript} />
+            </div>
             <p className="my-4">{note.transcript}</p>
           </div>
         </div>

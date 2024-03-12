@@ -1,7 +1,13 @@
-import Link from 'next/link';
 import AuthButton from '@/components/AuthButton';
+import Link from 'next/link';
+import { ReactNode } from 'react';
 
-export default function Header({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: ReactNode;
+  query?: string;
+}
+
+export default function Header({ children, query = '' }: Props) {
   return (
     <>
       <header className="fixed w-full my-8">
@@ -21,6 +27,7 @@ export default function Header({ children }: { children: React.ReactNode }) {
                   name="q"
                   placeholder="Search"
                   className="w-full py-2 px-4 border border-gray-300 rounded-full placeholder:text-black"
+                  defaultValue={query}
                 />
               </form>
             </div>
