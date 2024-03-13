@@ -48,7 +48,7 @@ export default function NotesTable({ notes, search, tag }: Props) {
         </form>
       )}
       {!!notes?.length ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10">
           {notes.map((note, i) => (
             <Link
               key={note.id}
@@ -67,7 +67,7 @@ export default function NotesTable({ notes, search, tag }: Props) {
                   ))}
                 </div>
               ) : null}
-              <span className="block mt-auto text-3xl truncate">
+              <span className="block mt-auto text-2xl xl:text-3xl truncate">
                 {note?.title ? note.title : `Note #${note.id}`}
               </span>
             </Link>
