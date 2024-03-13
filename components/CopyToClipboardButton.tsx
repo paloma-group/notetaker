@@ -4,7 +4,7 @@ import { PiCheck, PiCopy, PiX } from 'react-icons/pi';
 import { Tooltip } from 'react-tooltip';
 
 interface Props {
-  text: string | null;
+  text?: string | null;
 }
 
 type CopyState = 'pending' | 'error' | 'copied';

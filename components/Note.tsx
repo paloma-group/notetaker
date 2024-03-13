@@ -1,10 +1,11 @@
 'use client';
 
+import { updateTranscript } from '@/actions/updateTranscript';
 import Modal from '@/components/Modal';
-import Transformation from './Transformation';
 import { formatDate } from '@/utils/date/formatDate';
-import { useState } from 'react';
 import { extractRawTextFromTranscript } from '@/utils/notes/transcript';
+import { useState } from 'react';
+import Transformation from './Transformation';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -67,6 +68,8 @@ export default function Note({
     setPrompt(promptSelection);
     setModalOpen(true);
   };
+
+  const handleTranscriptionChange = updateTranscript.bind(null, note.id);
 
   if (!note) {
     return <p>No note to display</p>;
@@ -141,6 +144,7 @@ export default function Note({
               title="Transcript"
               created_at={note.created_at}
               text={note.transcript}
+              action={handleTranscriptionChange}
             />
           </div>
         </div>
