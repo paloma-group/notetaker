@@ -12,7 +12,7 @@ export default function Header({ query = '' }: Props) {
         <div className="flex h-20 py-4 px-5 md:px-8 justify-center items-center">
           <div className="flex flex-1">
             <Link
-              href="/record"
+              href="/"
               className="hidden md:flex items-center justify-center w-10 h-10 text-white bg-orange-500 rounded-full mr-5"
               scroll={false}
             >
