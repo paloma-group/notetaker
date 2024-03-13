@@ -50,6 +50,7 @@ export type Database = {
           audio_file_id: string | null
           audio_file_path: string | null
           created_at: string
+          fts_query: unknown | null
           highlights: string | null
           id: number
           title: string | null
@@ -60,6 +61,7 @@ export type Database = {
           audio_file_id?: string | null
           audio_file_path?: string | null
           created_at?: string
+          fts_query?: unknown | null
           highlights?: string | null
           id?: number
           title?: string | null
@@ -70,6 +72,7 @@ export type Database = {
           audio_file_id?: string | null
           audio_file_path?: string | null
           created_at?: string
+          fts_query?: unknown | null
           highlights?: string | null
           id?: number
           title?: string | null
@@ -104,6 +107,55 @@ export type Database = {
         }
         Relationships: []
       }
+      transformation_outputs: {
+        Row: {
+          created_at: string
+          id: number
+          note_id: number | null
+          prompt_id: number | null
+          transformed_text: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          note_id?: number | null
+          prompt_id?: number | null
+          transformed_text?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          note_id?: number | null
+          prompt_id?: number | null
+          transformed_text?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_transcript_transformations_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: true
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_transcript_transformations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_transformation_outputs_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "transformation_prompts"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       transformation_prompts: {
         Row: {
           created_at: string
@@ -129,55 +181,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "public_transcript_transformation_input_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      transformation_outputs: {
-        Row: {
-          created_at: string
-          id: number
-          prompt_id: number | null
-          note_id: number | null
-          transformed_text: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          prompt_id?: number | null
-          note_id?: number | null
-          transformed_text?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          prompt_id?: number | null
-          note_id?: number | null
-          transformed_text?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "public_transcript_transformations_input_id_fkey"
-            columns: ["prompt_id"]
-            isOneToOne: false
-            referencedRelation: "transformation_prompts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_transcript_transformations_note_id_fkey"
-            columns: ["note_id"]
-            isOneToOne: false
-            referencedRelation: "notes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_transcript_transformations_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

@@ -1,11 +1,10 @@
+import { createTransform } from '@/actions/transforms';
 import { CopyToClipboardButton } from '@/components/CopyToClipboardButton';
 import { type NoteWithTransforms, TTPrompt } from '@/components/Note';
 import {
   extractRawTextFromTranscript,
   extractTranscriptComponents,
 } from '@/utils/notes/transcript';
-import { transform } from '@/utils/openai/transform';
-import { createClient } from '@/utils/supabase/client';
 import { Dialog, Transition } from '@headlessui/react';
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 
@@ -54,34 +53,10 @@ export default function Modal({
     if (!transformedText) {
       (async () => {
         if (!prompt) return;
-        const text = await transform(note.transcript, prompt.prompt);
+        const response = await createTransform(prompt.id, note.id);
 
-        if (!text) return;
-
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        const { data, error } = await supabase
-          .from('transformation_outputs')
-          .insert({
-            prompt_id: prompt.id,
-            note_id: note.id,
-            transformed_text: text,
-            user_id: note.user_id,
-          })
-          .select(
-            'transformed_text, transformation_prompts ( type ), created_at'
-          )
-          .limit(1)
-          .single();
-
-        if (data?.transformed_text) {
-          // @ts-ignore
-          // Hacky way so we don't have to refetch... TODO: find a better way
-          note.transformation_outputs.unshift(data);
-          setText(data.transformed_text);
+        if (response?.transformed_text) {
+          setText(response.transformed_text);
           setIsLoading(false);
         }
       })();

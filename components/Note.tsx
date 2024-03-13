@@ -1,5 +1,6 @@
 'use client';
 
+import { refreshTransform } from '@/actions/transforms';
 import { updateTranscript } from '@/actions/updateTranscript';
 import Modal from '@/components/Modal';
 import { formatDate } from '@/utils/date/formatDate';
@@ -103,7 +104,7 @@ export default function Note({
               </div>
             ) : null}
             <div className="my-8 p-8 rounded-xl bg-gray-100">
-              <h3 className="text-lg mb-3">Transform note</h3>
+              <h3 className="text-lg mb-3">✦ Transform note</h3>
               <div className="flex flex-wrap">
                 {!!prompts?.length &&
                   prompts.map((prompt) => (
@@ -137,6 +138,7 @@ export default function Note({
                       transformation.transformed_text
                     )
                   }
+                  refreshAction={refreshTransform.bind(null, transformation.id)}
                 />
               </div>
             ))}
