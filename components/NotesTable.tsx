@@ -14,26 +14,45 @@ export type NoteTableView = {
 
 interface Props {
   notes?: NoteTableView[] | null;
-  query?: string;
+  search?: string;
+  tag?: string;
 }
 
-export default function NotesTable({ notes, query }: Props) {
+export default function NotesTable({ notes, search, tag }: Props) {
   return (
     <div
       className={'grid gap-5 p-5 lg:p-10 bg-gray-200 rounded-3xl mb-4 lg:mb-8'}
     >
-      {query && (
+      {tag && (
+        <div>
+          <p>Tag results</p>
+          <h6 className={'text-4xl'}>“{tag}”</h6>
+        </div>
+      )}
+      {search && (
         <div>
           <p>Search results</p>
-          <h6 className={'text-4xl'}>“{query}”</h6>
+          <h6 className={'text-4xl'}>“{search}”</h6>
         </div>
+      )}
+      {tag && notes?.length && notes.length > 1 && (
+        <form action="/notes" className="grow md:grow-0">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search tag results"
+            className="py-2 px-4 border border-gray-300 rounded-full placeholder:text-black"
+          />
+          <input type="text" name="tag" hidden defaultValue={tag} />
+          <input type="submit" hidden />
+        </form>
       )}
       {!!notes?.length ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10">
           {notes.map((note, i) => (
             <Link
               key={note.id}
-              href={`/recording/${note.id}`}
+              href={`/notes/${note.id}`}
               className="flex flex-col h-48 px-5 py-6 bg-white rounded-3xl border-2 hover:border-orange-500 cursor-pointer"
             >
               {note?.note_tags?.length ? (
