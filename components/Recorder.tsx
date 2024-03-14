@@ -1,12 +1,13 @@
 'use client';
 
+import { RecordButton } from '@/components/RecordButton';
 import { formatDate } from '@/utils/date/formatDate';
 import { createNote } from '@/utils/notes/create-note';
-import Image from 'next/image';
-import spinner from '../assets/spinner.svg';
 import { createClient } from '@/utils/supabase/client';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { startTransition, useEffect, useRef, useState } from 'react';
+import spinner from '../assets/spinner.svg';
 
 const Recorder = ({ userId }: { userId: string }) => {
   const { push, refresh } = useRouter();
@@ -169,33 +170,14 @@ const Recorder = ({ userId }: { userId: string }) => {
     }
   };
 
-  const renderStartStopRecordingButton = () => {
-    const disabled = isRunning && !mediaRecorder;
-
-    return (
-      <button
-        onClick={handleRecordClick}
-        className={`flex items-center px-6 py-4 mx-auto border border-gray-300 rounded-full ${!disabled && 'hover:border-orange-500'}`}
-        disabled={disabled}
-      >
-        <span
-          className={`block rounded-full ${isRunning ? 'bg-error-50' : 'bg-orange-500 border-white'} mr-2 border-[1px]`}
-        >
-          <span
-            className={`block w-3 h-3 m-3 ${!isRunning && 'rounded-full'} bg-white`}
-          ></span>
-        </span>
-        <span className="text-2xl">
-          {isRunning ? 'Stop recording' : 'Record a note'}
-        </span>
-      </button>
-    );
-  };
-
   if (!isRunning && !isProcessing) {
     return (
       <div className="h-[70dvh] flex flex-col items-center justify-center">
-        {renderStartStopRecordingButton()}
+        <RecordButton
+          onClick={handleRecordClick}
+          disabled={isRunning && !mediaRecorder}
+          isRunning={isRunning}
+        />
       </div>
     );
   }
@@ -217,7 +199,13 @@ const Recorder = ({ userId }: { userId: string }) => {
           className="my-4 w-80 mx-auto"
         ></canvas>
       )}
-      {!isProcessing && renderStartStopRecordingButton()}
+      {!isProcessing && (
+        <RecordButton
+          onClick={handleRecordClick}
+          disabled={isRunning && !mediaRecorder}
+          isRunning={isRunning}
+        />
+      )}
     </div>
   );
 };

@@ -22,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={dmSans.className}>
-      <body className="bg-gray-100">
+      <body className="bg-background">
         <main>{children}</main>
       </body>
     </html>

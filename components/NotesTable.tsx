@@ -20,9 +20,7 @@ interface Props {
 
 export default function NotesTable({ notes, search, tag }: Props) {
   return (
-    <div
-      className={'grid gap-5 p-5 lg:p-10 bg-gray-200 rounded-3xl mb-4 lg:mb-8'}
-    >
+    <div className={'grid gap-5 p-5 lg:p-10 bg-white rounded-3xl mb-4 lg:mb-8'}>
       {tag && (
         <div>
           <p>Tag results</p>
@@ -53,19 +51,12 @@ export default function NotesTable({ notes, search, tag }: Props) {
             <Link
               key={note.id}
               href={`/notes/${note.id}`}
-              className="flex flex-col h-48 px-5 py-6 bg-white rounded-3xl border-2 hover:border-orange-500 cursor-pointer"
+              className="flex flex-col h-48 px-5 py-6 bg-gray-200 rounded-3xl border-2 hover:border-orange-500 cursor-pointer"
             >
-              {note?.note_tags?.length ? (
-                <div className="flex flex-wrap">
-                  {note.note_tags.map((t, i) => (
-                    <span
-                      key={`tag-${i}`}
-                      className="capitalize text-xs py-2 px-4 border border-gray-400 rounded-full mr-3 whitespace-pre mb-4"
-                    >
-                      {t.tags?.name}
-                    </span>
-                  ))}
-                </div>
+              {note?.note_tags?.at(0) ? (
+                <span className="capitalize text-xs py-2 px-4 border border-gray-400 rounded-full whitespace-pre place-self-start">
+                  {note?.note_tags?.at(0)?.tags?.name}
+                </span>
               ) : null}
               <span className="block mt-auto text-2xl xl:text-3xl truncate">
                 {note?.title ? note.title : `Note #${note.id}`}

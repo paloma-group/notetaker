@@ -106,7 +106,7 @@ export default function Transformation({
 
   return (
     <form action={handleAction}>
-      <div className="border-t border-white py-6 grid gap-4">
+      <div className="bg-gray-300 p-6 grid gap-4 rounded-xl">
         <div className={'flex justify-between'}>
           <h3 className="text-xl font-semibold">{title}</h3>
           <div className={'flex gap-4'}>
