@@ -7,8 +7,8 @@ interface Props {
 
 export default function Header({ query = '' }: Props) {
   return (
-    <header className="sticky py-8 top-0">
-      <div className="container bg-white rounded-full">
+    <header className="sticky py-8 top-0 z-50">
+      <div className="container bg-white rounded-xl">
         <div className="flex h-20 py-4 px-5 md:px-8 justify-center items-center">
           <div className="flex flex-1">
             <Link
