@@ -8,7 +8,7 @@ export default function AppLayout({ children }: Props) {
   return (
     <div className={'container min-h-svh layout-container'}>
       <Header />
-      {children}
+      <div>{children}</div>
     </div>
   );
 }

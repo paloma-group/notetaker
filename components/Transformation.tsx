@@ -51,7 +51,7 @@ const EditButtons = ({
   isEditing: boolean;
 }) => {
   const formState = useFormStatus();
-  console.log(formState);
+
   if (!isEditing) {
     return;
   }
