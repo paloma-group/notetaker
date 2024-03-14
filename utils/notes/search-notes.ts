@@ -15,15 +15,18 @@ export async function searchNotes({
     const { data: notesByTags } = await supabase
       .from('tags')
       .select(`note_tags ( notes ( id, title, note_tags ( tags ( name ) ) ) )`)
-      .eq('name', tag);
+      .eq('name', tag)
+      .limit(1)
+      .single();
 
-    if (notesByTags?.length) {
-      const notesByTagsMapped = notesByTags[0].note_tags.reduce<
-        NoteTableView[]
-      >((mappedNotes, note_tag) => {
-        if (note_tag.notes) return [...mappedNotes, note_tag.notes];
-        return mappedNotes;
-      }, []);
+    if (notesByTags) {
+      const notesByTagsMapped = notesByTags.note_tags.reduce<NoteTableView[]>(
+        (mappedNotes, note_tag) => {
+          if (note_tag.notes) return [...mappedNotes, note_tag.notes];
+          return mappedNotes;
+        },
+        []
+      );
 
       notes = notesByTagsMapped;
     }
