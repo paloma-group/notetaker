@@ -10,15 +10,6 @@ export default async function Notes({
   searchParams: { search?: string; tag?: string };
 }) {
   const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect('/login');
-  }
-
   const { search, tag } = searchParams;
 
   if (!search && !tag) {
