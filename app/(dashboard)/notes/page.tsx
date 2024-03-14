@@ -1,9 +1,8 @@
-import NotesTable, { NoteTableView } from '@/components/NotesTable';
+import NotesTable from '@/components/NotesTable';
 import { createClient } from '@/utils/supabase/server';
 import { searchNotes } from '@/utils/notes/search-notes';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { PiCaretLeft } from 'react-icons/pi';
+import AllNotesLink from '@/components/AllNotesLink';
 
 export default async function Notes({
   searchParams,
@@ -21,9 +20,7 @@ export default async function Notes({
 
   return (
     <div>
-      <Link href={'/'} className={'flex items-center p-4'}>
-        <PiCaretLeft /> All notes
-      </Link>
+      <AllNotesLink />
       <NotesTable notes={notes} search={search} tag={tag} />
     </div>
   );

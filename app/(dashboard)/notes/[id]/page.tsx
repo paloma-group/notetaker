@@ -1,8 +1,7 @@
+import AllNotesLink from '@/components/AllNotesLink';
 import Note from '@/components/Note';
 import { createClient } from '@/utils/supabase/server';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { PiCaretLeft } from 'react-icons/pi';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -39,9 +38,7 @@ export default async function NotePage({ params }: { params: { id: string } }) {
 
   return (
     <>
-      <Link href={'/'} className={'flex items-center p-4'}>
-        <PiCaretLeft /> All notes
-      </Link>
+      <AllNotesLink />
       {note && prompts ? <Note note={note} prompts={prompts} /> : null}
     </>
   );
