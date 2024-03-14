@@ -48,7 +48,7 @@ const Recorder = ({ userId }: { userId: string }) => {
       if (note) {
         startTransition(() => {
           refresh();
-          push(`/recording/${note.id}`);
+          push(`/notes/${note.id}`);
         });
       }
 

@@ -1,17 +1,12 @@
+import AllNotesLink from '@/components/AllNotesLink';
 import Note from '@/components/Note';
 import { createClient } from '@/utils/supabase/server';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { PiCaretLeft } from 'react-icons/pi';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default async function Recording({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function NotePage({ params }: { params: { id: string } }) {
   const id = params.id;
 
   const supabase = createClient();
@@ -27,7 +22,7 @@ export default async function Recording({
   const { data: note } = await supabase
     .from('notes')
     .select(
-      `id, title, transcript, highlights, created_at, user_id, note_tags ( tags ( name ) ), transformation_outputs ( id, transformed_text, transformation_prompts ( type ), created_at )`
+      `id, title, transcript, highlights, created_at, user_id, note_tags ( tags ( id, name ) ), transformation_outputs ( id, transformed_text, transformation_prompts ( type ), created_at )`
     )
     .order('created_at', {
       referencedTable: 'transformation_outputs',
@@ -43,9 +38,7 @@ export default async function Recording({
 
   return (
     <>
-      <Link href={'/'} className={'flex items-center p-4'}>
-        <PiCaretLeft /> All notes
-      </Link>
+      <AllNotesLink />
       {note && prompts ? <Note note={note} prompts={prompts} /> : null}
     </>
   );

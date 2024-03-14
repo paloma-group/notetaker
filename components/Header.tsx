@@ -18,10 +18,10 @@ export default function Header({ query = '' }: Props) {
             >
               <span>+</span>
             </Link>
-            <form action="/search" className="grow md:grow-0">
+            <form action="/notes" className="grow md:grow-0">
               <input
                 type="text"
-                name="q"
+                name="search"
                 placeholder="Search"
                 className="w-full py-2 px-4 border border-gray-300 rounded-full placeholder:text-black"
                 defaultValue={query}

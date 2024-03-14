@@ -6,6 +6,7 @@ import { formatDate } from '@/utils/date/formatDate';
 import { extractRawTextFromTranscript } from '@/utils/notes/transcript';
 import { useState } from 'react';
 import Transformation from './Transformation';
+import Link from 'next/link';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -29,6 +30,7 @@ export type NoteWithTransforms = {
   user_id: string | null;
   note_tags: {
     tags: {
+      id: number;
       name: string;
     } | null;
   }[];
@@ -93,12 +95,11 @@ export default function Note({
             {note?.note_tags?.length ? (
               <div className="flex mt-4">
                 {note.note_tags.map((t, i) => (
-                  <span
-                    key={`tag-${i}`}
-                    className="capitalize text-xs py-2 px-4 border border-gray-400 rounded-full mr-3"
-                  >
-                    {t.tags?.name}
-                  </span>
+                  <Link key={t.tags?.id} href={`/notes?tag=${t.tags?.name}`}>
+                    <span className="capitalize text-xs py-2 px-4 border border-gray-400 hover:border-orange-500 rounded-full mr-3">
+                      {t.tags?.name}
+                    </span>
+                  </Link>
                 ))}
               </div>
             ) : null}
