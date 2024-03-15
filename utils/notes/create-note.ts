@@ -29,7 +29,7 @@ export async function createNote({
     });
 
   // create a new Note entity
-  const { data: noteData } = await supabase
+  const { data: noteData, error } = await supabase
     .from('notes')
     .insert({
       audio_file_path: audioData?.path || '',
@@ -44,7 +44,12 @@ export async function createNote({
     .limit(1)
     .single();
 
-  if (!noteData || !keywords?.length) return;
+  if (!noteData || !keywords?.length) {
+    if (error) {
+      throw Error(error.message);
+    }
+    throw Error('Could not create new note');
+  }
 
   // generate tags - check if tags already exists
   const { data: existingTags } = await supabase

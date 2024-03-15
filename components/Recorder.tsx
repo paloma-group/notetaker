@@ -19,6 +19,7 @@ const Recorder = ({ userId }: { userId: string }) => {
   );
 
   const [title, setTitle] = useState('Record your voice note');
+  const [error, setError] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
@@ -28,6 +29,7 @@ const Recorder = ({ userId }: { userId: string }) => {
 
   const startRecording = async () => {
     setIsRunning(true);
+    setError(null);
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
@@ -40,13 +42,26 @@ const Recorder = ({ userId }: { userId: string }) => {
 
     recorder.onstop = async () => {
       const blob = new Blob(audioChunks, { type: 'audio/mp3' });
-      const note = await createNote({
-        userId,
-        audioBlob: blob,
-      });
+      try {
+        const note = await createNote({
+          userId,
+          audioBlob: blob,
+        });
 
-      if (note) {
-        return push(`/notes/${note.id}`);
+        if (note) {
+          return push(`/notes/${note.id}`);
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError(
+            'There was an error with the transcription process, please try again.'
+          );
+        }
+        setIsRunning(false);
+        setIsProcessing(false);
+        seconds.reset();
       }
     };
     setMediaRecorder(recorder);
@@ -81,11 +96,18 @@ const Recorder = ({ userId }: { userId: string }) => {
 
   if (!isRunning && !isProcessing) {
     return (
-      <RecordButton
-        onClick={handleRecordClick}
-        disabled={isRunning && !mediaRecorder}
-        isRunning={isRunning}
-      />
+      <div>
+        <RecordButton
+          onClick={handleRecordClick}
+          disabled={isRunning && !mediaRecorder}
+          isRunning={isRunning}
+        />
+        {error && (
+          <p className="text-base font-normal text-center mx-auto mt-4 text-red-500">
+            {error}
+          </p>
+        )}
+      </div>
     );
   }
 
