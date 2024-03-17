@@ -1,0 +1,88 @@
+'use client';
+
+import spinner from '@/assets/spinner.svg';
+import { InputHTMLAttributes, useState } from 'react';
+import { useFormStatus } from 'react-dom';
+import Image from 'next/image';
+import { PiCheck, PiPencil, PiX } from 'react-icons/pi';
+
+export default function EditableInput({
+  label,
+  inputProps,
+  action,
+}: {
+  label: string;
+  inputProps?: InputHTMLAttributes<HTMLInputElement>;
+  action?: (data: FormData) => Promise<any>;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEditing = () => {
+    setIsEditing(false);
+  };
+
+  const EditButtons = ({
+    onCancel,
+    isEditing,
+  }: {
+    onCancel: () => void;
+    isEditing: boolean;
+  }) => {
+    const formState = useFormStatus();
+    if (!isEditing) {
+      return;
+    }
+
+    if (formState.pending) {
+      return <Image className="m-auto size-4" src={spinner} alt={'Loading'} />;
+    }
+
+    return (
+      <>
+        <button onClick={onCancel} type={'button'}>
+          <PiX className={'text-red-500'} />
+        </button>
+        <button type={'submit'}>
+          <PiCheck className={'text-green-500'} />
+        </button>
+      </>
+    );
+  };
+
+  const handleAction = async (data: FormData) => {
+    const inputText = data.get('input');
+    if (typeof inputText === 'string' && action) {
+      setIsEditing(false);
+      await action(data);
+    }
+  };
+
+  return (
+    <form action={handleAction}>
+      <div className="grid">
+        <label className="text-md mb-2">{label}</label>
+        <div className="relative">
+          <input
+            name="input"
+            className="rounded-md w-full px-4 py-2 border bg-white disabled:text-gray-400"
+            type="text"
+            disabled={!isEditing}
+            {...inputProps}
+          />
+          <div className="absolute top-3 right-3">
+            {!isEditing && (
+              <button onClick={handleEditClick}>
+                <PiPencil />
+              </button>
+            )}
+            <EditButtons onCancel={handleCancelEditing} isEditing={isEditing} />
+          </div>
+        </div>
+      </div>
+    </form>
+  );
+}
