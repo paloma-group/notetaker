@@ -1,6 +1,7 @@
 import EditableInput from '@/components/EditableInput';
 import { createClient } from '@/utils/supabase/server';
-import { updateApiKey } from '@/actions/updateApiKey';
+import { updateApiKey } from '@/actions/profile/updateApiKey';
+import { updateName } from '@/actions/profile/updateName.ts';
 
 export default async function Profile() {
   const supabase = createClient();
@@ -19,7 +20,6 @@ export default async function Profile() {
 
   const handleApiKeyChange = updateApiKey.bind(null, ai_integration?.id);
 
-
   return (
     <div className="flex p-6 md:p-12">
       <div className="hidden md:block self-start xl:w-60 2xl:w-80 flex-none mr-16">
@@ -34,10 +34,21 @@ export default async function Profile() {
         </div>
         <div>
           <h4 className="text-xl font-bold mb-4">Account details</h4>
-          <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl">
-            name: {user.user_metadata?.name}
-            <br />
-            email: {user.email}
+          <div className="p-6 md:p-12 flex flex-col space-y-4 bg-gray-200 rounded-3xl">
+            <EditableInput
+              label="Name"
+              inputProps={{
+                defaultValue: user.user_metadata?.name,
+                placeholder: 'Your name',
+                required: true,
+              }}
+              action={updateName}
+            />
+            <EditableInput
+              label="Email address"
+              inputProps={{ defaultValue: user.email }}
+              // action={}
+            />
           </div>
         </div>
         <div>
@@ -51,7 +62,10 @@ export default async function Profile() {
           <div className="grid p-6 md:p-12 bg-gray-200 rounded-3xl">
             <EditableInput
               label="API Key name"
-              inputProps={{ defaultValue: ai_integration?.api_key }}
+              inputProps={{
+                defaultValue: ai_integration?.api_key,
+                placeholder: 'OpenAI API Key',
+              }}
               action={handleApiKeyChange}
             />
           </div>
