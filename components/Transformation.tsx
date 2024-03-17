@@ -5,14 +5,15 @@ import { formatDate } from '@/utils/date/formatDate';
 import Image from 'next/image';
 import { useOptimistic, useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { PiCheck, PiPencil, PiX } from 'react-icons/pi';
+import { PiArrowsClockwise, PiCheck, PiPencil, PiX } from 'react-icons/pi';
 import { CopyToClipboardButton } from './CopyToClipboardButton';
 
 interface Props {
   title?: string | null;
   text?: string | null;
   created_at?: string | null;
-  action?: (data: FormData) => Promise<any>;
+  action?: (data: FormData) => Promise<unknown>;
+  refreshAction?: () => Promise<unknown>;
 }
 
 const EditableText = ({
@@ -72,11 +73,30 @@ const EditButtons = ({
   );
 };
 
+const RefreshButton = ({ refreshAction }: Pick<Props, 'refreshAction'>) => {
+  const formState = useFormStatus();
+
+  if (!refreshAction) {
+    return;
+  }
+
+  if (formState.pending) {
+    return <Image className="m-auto size-4" src={spinner} alt={'Loading'} />;
+  }
+
+  return (
+    <button formAction={refreshAction}>
+      <PiArrowsClockwise />
+    </button>
+  );
+};
+
 export default function Transformation({
   title,
   text,
   created_at,
   action,
+  refreshAction,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [optimisticText, updateOptimisticText] = useOptimistic<string>(
@@ -88,10 +108,6 @@ export default function Transformation({
   };
 
   const handleCancelEditing = () => {
-    setIsEditing(false);
-  };
-
-  const handleSave = async () => {
     setIsEditing(false);
   };
 
@@ -121,6 +137,7 @@ export default function Transformation({
                 isEditing={isEditing}
               />
             )}
+            <RefreshButton refreshAction={refreshAction} />
             <CopyToClipboardButton text={optimisticText} />
           </div>
         </div>
