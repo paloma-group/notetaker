@@ -30,7 +30,7 @@ export default async function Profile() {
   const handleApiKeyChange = updateApiKey.bind(null, ai_integration?.id);
 
   return (
-    <div className="flex p-6 md:p-12">
+    <div className="flex p-6 md:p-12 bg-white rounded-3xl mb-4 lg:mb-8">
       <div className="hidden md:block self-start xl:w-60 2xl:w-80 flex-none mr-16">
         <h3 className="text-4xl font-semibold">Profile</h3>
       </div>
