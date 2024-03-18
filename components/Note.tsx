@@ -1,5 +1,6 @@
 'use client';
 
+import { refreshTransform } from '@/actions/transforms';
 import { updateTranscript } from '@/actions/updateTranscript';
 import Modal from '@/components/Modal';
 import { formatDate } from '@/utils/date/formatDate';
@@ -79,7 +80,7 @@ export default function Note({
 
   return (
     <>
-      <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl">
+      <div className="flex p-6 md:p-12 bg-white rounded-3xl">
         <div className="hidden md:block self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
           <h3 className="text-xl font-semibold">Highlights</h3>
           <ul className="list-disc pl-4">
@@ -104,7 +105,7 @@ export default function Note({
               </div>
             ) : null}
             <div className="my-8 p-8 rounded-xl bg-gray-100">
-              <h3 className="text-lg mb-3">Transform note</h3>
+              <h3 className="text-lg mb-3">✦ Transform note</h3>
               <div className="flex flex-wrap">
                 {!!prompts?.length &&
                   prompts.map((prompt) => (
@@ -120,7 +121,7 @@ export default function Note({
               </div>
             </div>
           </div>
-          <div>
+          <div className={'grid gap-4'}>
             <div className="block md:hidden mb-8">
               <h3 className="text-xl font-semibold">Highlights</h3>
               <ul className="list-disc pl-4">
@@ -138,6 +139,7 @@ export default function Note({
                       transformation.transformed_text
                     )
                   }
+                  refreshAction={refreshTransform.bind(null, transformation.id)}
                 />
               </div>
             ))}

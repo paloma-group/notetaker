@@ -1,32 +1,35 @@
 'use client';
 
+import { RecordButton } from '@/components/RecordButton';
+import { Waveform } from '@/components/Waveform';
+import { useCounter } from '@/hooks/useCounter';
+import { useInterval } from '@/hooks/useInterval';
+import useNavigatorPermissions from '@/hooks/useNavigatorPermission';
 import { formatDate } from '@/utils/date/formatDate';
 import { createNote } from '@/utils/notes/create-note';
 import Image from 'next/image';
-import spinner from '../assets/spinner.svg';
-import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
-import { startTransition, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import spinner from '../assets/spinner.svg';
 
 const Recorder = ({ userId }: { userId: string }) => {
-  const { push, refresh } = useRouter();
-
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const audioContext = useRef<AudioContext | null>(null);
-  const analyser = useRef<AnalyserNode | null>(null);
-  const dataArray = useRef<Uint8Array | null>(null);
+  const { push } = useRouter();
+  const microphonePermission = useNavigatorPermissions(
+    'microphone' as PermissionName
+  );
 
   const [title, setTitle] = useState('Record your voice note');
+  const [error, setError] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
   const [isRunning, setIsRunning] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [seconds, setSeconds] = useState(0);
-  const [minutes, setMinutes] = useState(0);
+  const seconds = useCounter();
 
-  async function startRecording() {
+  const startRecording = async () => {
     setIsRunning(true);
+    setError(null);
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
@@ -39,185 +42,105 @@ const Recorder = ({ userId }: { userId: string }) => {
 
     recorder.onstop = async () => {
       const blob = new Blob(audioChunks, { type: 'audio/mp3' });
-      const note = await createNote({
-        supabase: createClient(),
-        userId,
-        audioBlob: blob,
-      });
-
-      if (note) {
-        startTransition(() => {
-          refresh();
-          push(`/notes/${note.id}`);
+      try {
+        const note = await createNote({
+          userId,
+          audioBlob: blob,
         });
-      }
 
-      setTitle('Record your voice note');
-      setMinutes(0);
-      setSeconds(0);
+        if (note) {
+          return push(`/notes/${note.id}`);
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError(
+            'There was an error with the transcription process, please try again.'
+          );
+        }
+        setIsRunning(false);
+        setIsProcessing(false);
+        seconds.reset();
+      }
     };
     setMediaRecorder(recorder);
     recorder.start(1000);
-  }
+  };
 
   function stopRecording() {
-    // @ts-ignore
+    if (!mediaRecorder) {
+      setIsRunning(false);
+      return;
+    }
+
     mediaRecorder.stop();
     setIsRunning(false);
     setIsProcessing(true);
 
     // Stop all media tracks
-    mediaRecorder?.stream.getTracks().forEach((track) => track.stop());
+    mediaRecorder.stream.getTracks().forEach((track) => track.stop());
   }
 
-  useEffect(() => {
-    if (canvasRef.current && mediaRecorder && mediaRecorder.stream) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        audioContext.current = new AudioContext();
-        analyser.current = audioContext.current.createAnalyser();
-        const source = audioContext.current.createMediaStreamSource(
-          mediaRecorder.stream
-        );
-        source.connect(analyser.current);
-        analyser.current.fftSize = 256;
-        const bufferLength = analyser.current.frequencyBinCount;
-        dataArray.current = new Uint8Array(bufferLength);
-
-        // Initialize an array to store smoothed amplitude values
-        const smoothedAmplitudes = new Array(bufferLength).fill(0);
-
-        const draw = () => {
-          if (ctx && analyser.current && dataArray.current) {
-            const WIDTH = canvas.width;
-            const HEIGHT = canvas.height;
-
-            analyser.current.getByteFrequencyData(dataArray.current);
-
-            // Apply smoothing to amplitude values
-            for (let i = 0; i < bufferLength; i++) {
-              smoothedAmplitudes[i] =
-                0.9 * smoothedAmplitudes[i] + 0.1 * dataArray.current[i];
-            }
-
-            const maxAmplitude = Math.max(...smoothedAmplitudes);
-            const centerLine = HEIGHT / 2;
-            const barWidth = 2;
-
-            ctx.fillStyle = 'rgb(243, 244, 246)';
-            ctx.fillRect(0, 0, WIDTH, HEIGHT);
-
-            for (let i = 0; i < bufferLength; i++) {
-              const amplitude = smoothedAmplitudes[i];
-              const barHeight = ((amplitude / maxAmplitude) * HEIGHT) / 2 || 1;
-
-              ctx.fillStyle = 'rgb(249, 115, 22)';
-              ctx.fillRect(
-                WIDTH / 2 + i * (barWidth + 1),
-                centerLine - barHeight / 2,
-                barWidth,
-                barHeight
-              );
-              ctx.fillRect(
-                WIDTH / 2 - (i + 1) * (barWidth + 1),
-                centerLine - barHeight / 2,
-                barWidth,
-                barHeight
-              );
-            }
-
-            // Shift the canvas to the left
-            ctx.drawImage(canvas, -1, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
-
-            // Clear the rightmost column
-            ctx.clearRect(WIDTH - 1, 0, 1, HEIGHT);
-          }
-          requestAnimationFrame(draw);
-        };
-
-        draw();
-      }
-    }
-  }, [mediaRecorder]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (isRunning && mediaRecorder) {
-      interval = setInterval(() => {
-        setSeconds((prevSeconds) => {
-          if (prevSeconds === 59) {
-            setMinutes((prevMinutes) => prevMinutes + 1);
-            return 0;
-          }
-          return prevSeconds + 1;
-        });
-      }, 1000);
-    }
-
-    return () => clearInterval(interval);
-  }, [isRunning, mediaRecorder]);
+  useInterval(seconds.increment, isRunning && mediaRecorder ? 1000 : null);
 
   const handleRecordClick = () => {
     if (!isRunning) {
       setTitle(formatDate(new Date()));
-      startRecording();
-    } else if (isRunning) {
-      setTitle('Generating transcription...');
-      stopRecording();
+      return startRecording();
     }
-  };
 
-  const renderStartStopRecordingButton = () => {
-    const disabled = isRunning && !mediaRecorder;
-
-    return (
-      <button
-        onClick={handleRecordClick}
-        className={`flex items-center px-6 py-4 mx-auto border border-gray-300 rounded-full ${!disabled && 'hover:border-orange-500'}`}
-        disabled={disabled}
-      >
-        <span
-          className={`block rounded-full ${isRunning ? 'bg-error-50' : 'bg-orange-500 border-white'} mr-2 border-[1px]`}
-        >
-          <span
-            className={`block w-3 h-3 m-3 ${!isRunning && 'rounded-full'} bg-white`}
-          ></span>
-        </span>
-        <span className="text-2xl">
-          {isRunning ? 'Stop recording' : 'Record a note'}
-        </span>
-      </button>
-    );
+    setTitle('Generating transcription...');
+    stopRecording();
   };
 
   if (!isRunning && !isProcessing) {
     return (
-      <div className="h-[70dvh] flex flex-col items-center justify-center">
-        {renderStartStopRecordingButton()}
+      <div>
+        <RecordButton
+          onClick={handleRecordClick}
+          disabled={isRunning && !mediaRecorder}
+          isRunning={isRunning}
+        />
+        {error && (
+          <p className="text-base font-normal text-center mx-auto mt-4 text-red-500">
+            {error}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  if (isRunning && microphonePermission.status === 'denied') {
+    return (
+      <div>
+        <p className="text-xl font-400 text-center">Microphone Access Denied</p>
+        <p className="text-base font-normal text-center mx-auto mt-4">
+          To record voice notes, allow microphone access in your browser
+          settings.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-lg mx-auto">
-      <div className="text-5xxl font-400  text-center mt-32">
-        {minutes < 10 ? `0${minutes}` : minutes}:
-        {seconds < 10 ? `0${seconds}` : seconds}
+    <div>
+      <div className="text-5xxl font-400 text-center">
+        {Math.floor(seconds.count / 60)}:
+        {(seconds.count % 60).toString().padStart(2, '0')}
       </div>
       <p className="text-base font-normal text-center mx-auto mt-4">{title}</p>
-      {isRunning && !mediaRecorder && (
-        <Image className="m-auto w-10 mt-20" src={spinner} alt={'Loading'} />
+      {((isRunning && !mediaRecorder) || isProcessing) && (
+        <Image className="m-auto w-10" src={spinner} alt={'Loading'} />
       )}
+      <Waveform isProcessing={isProcessing} mediaRecorder={mediaRecorder} />
       {!isProcessing && (
-        <canvas
-          ref={canvasRef}
-          height={40}
-          className="my-4 w-80 mx-auto"
-        ></canvas>
+        <RecordButton
+          onClick={handleRecordClick}
+          disabled={isRunning && !mediaRecorder}
+          isRunning={isRunning}
+        />
       )}
-      {!isProcessing && renderStartStopRecordingButton()}
     </div>
   );
 };

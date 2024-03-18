@@ -4,7 +4,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "prettier:write": "prettier --write ."
+    "prettier:write": "prettier --write .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.18",
@@ -18,6 +19,7 @@
     "postcss": "8.4.33",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hotkeys-hook": "^4.5.0",
     "react-icons": "^5.0.1",
     "react-tooltip": "^5.26.3",
     "tailwind-merge": "^2.2.1",

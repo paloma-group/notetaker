@@ -1,14 +1,11 @@
 import AuthButton from '@/components/AuthButton';
+import { SearchInput } from '@/components/SearchInput';
 import Link from 'next/link';
 
-interface Props {
-  query?: string;
-}
-
-export default function Header({ query = '' }: Props) {
+export default function Header() {
   return (
-    <header className="sticky py-8 top-0">
-      <div className="container bg-white rounded-full">
+    <header className="sticky py-8 top-0 z-50">
+      <div className="container bg-white rounded-xl">
         <div className="flex h-20 py-4 px-5 md:px-8 justify-center items-center">
           <div className="flex flex-1">
             <Link
@@ -19,13 +16,7 @@ export default function Header({ query = '' }: Props) {
               <span>+</span>
             </Link>
             <form action="/notes" className="grow md:grow-0">
-              <input
-                type="text"
-                name="search"
-                placeholder="Search"
-                className="w-full py-2 px-4 border border-gray-300 rounded-full placeholder:text-black"
-                defaultValue={query}
-              />
+              <SearchInput />
             </form>
           </div>
           <h1 className="text-xl font-semibold italic self-center flex-none px-4">

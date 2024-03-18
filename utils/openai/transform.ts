@@ -1,27 +1,23 @@
-export const transform = async (
-  transcription: string | null,
-  prompt: string
-): Promise<string | null> => {
-  try {
-    const response = await fetch('/api/transformText', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        transcription,
-        prompt,
-      }),
-    });
-    const data = await response.json();
+import OpenAI from 'openai';
 
-    if (response.status !== 200) {
-      console.error(`Request failed with status ${response.status}`);
-      return null; // Return null directly
-    }
-    return data.result;
-  } catch (error) {
-    console.error(error);
-    return null;
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export const transform = async (transcription: string, prompt: string) => {
+  if (!process.env.OPENAI_API_KEY) {
+    throw Error(
+      'OpenAI API key not configured, please follow instructions in README.md'
+    );
   }
+
+  const model = 'gpt-3.5-turbo';
+  const content = `${prompt}\n\n[TRANSCRIPT]\n${transcription}`;
+
+  const response = await openai.chat.completions.create({
+    messages: [{ role: 'user', content }],
+    model,
+  });
+
+  return response.choices[0].message.content;
 };

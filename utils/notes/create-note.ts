@@ -1,14 +1,14 @@
-import { v4 } from 'uuid';
-import { createClient } from '@/utils/supabase/client';
-import { transcript } from '@/utils/openai/transcript';
 import { highlights as generateHighlights } from '@/utils/openai/highlights';
+import { transcript } from '@/utils/openai/transcript';
+import { createClient } from '@/utils/supabase/client';
+import { v4 } from 'uuid';
+
+const supabase = createClient();
 
 export async function createNote({
-  supabase,
   userId,
   audioBlob,
 }: {
-  supabase: ReturnType<typeof createClient>;
   userId: string;
   audioBlob: Blob;
 }) {
@@ -29,7 +29,7 @@ export async function createNote({
     });
 
   // create a new Note entity
-  const { data: noteData } = await supabase
+  const { data: noteData, error } = await supabase
     .from('notes')
     .insert({
       audio_file_path: audioData?.path || '',
@@ -44,7 +44,12 @@ export async function createNote({
     .limit(1)
     .single();
 
-  if (!noteData || !keywords?.length) return;
+  if (!noteData || !keywords?.length) {
+    if (error) {
+      throw Error(error.message);
+    }
+    throw Error('Could not create new note');
+  }
 
   // generate tags - check if tags already exists
   const { data: existingTags } = await supabase
