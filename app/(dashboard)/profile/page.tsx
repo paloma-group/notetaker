@@ -15,6 +15,12 @@ export default async function Profile() {
 
   if (!user) return;
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name, avatar_url')
+    .limit(1)
+    .single();
+
   const { data: ai_integration } = await supabase
     .from('ai_integration')
     .select('id, api_key')
@@ -41,7 +47,7 @@ export default async function Profile() {
             <EditableInput
               label="Name"
               inputProps={{
-                defaultValue: user.user_metadata?.name,
+                defaultValue: profile?.full_name,
                 placeholder: 'Your name',
                 required: true,
               }}

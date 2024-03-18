@@ -9,13 +9,30 @@ create table "public"."ai_integration" (
 
 alter table "public"."ai_integration" enable row level security;
 
+create table "public"."profiles" (
+    "id" uuid not null,
+    "full_name" text,
+    "avatar_url" text
+);
+
+
+alter table "public"."profiles" enable row level security;
+
 CREATE UNIQUE INDEX ai_integration_pkey ON public.ai_integration USING btree (id);
 
+CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id);
+
 alter table "public"."ai_integration" add constraint "ai_integration_pkey" PRIMARY KEY using index "ai_integration_pkey";
+
+alter table "public"."profiles" add constraint "profiles_pkey" PRIMARY KEY using index "profiles_pkey";
 
 alter table "public"."ai_integration" add constraint "public_ai_integration_user_id_fkey" FOREIGN KEY (user_id) REFERENCES auth.users(id) not valid;
 
 alter table "public"."ai_integration" validate constraint "public_ai_integration_user_id_fkey";
+
+alter table "public"."profiles" add constraint "profiles_id_fkey" FOREIGN KEY (id) REFERENCES auth.users(id) not valid;
+
+alter table "public"."profiles" validate constraint "profiles_id_fkey";
 
 grant delete on table "public"."ai_integration" to "anon";
 
@@ -59,6 +76,48 @@ grant truncate on table "public"."ai_integration" to "service_role";
 
 grant update on table "public"."ai_integration" to "service_role";
 
+grant delete on table "public"."profiles" to "anon";
+
+grant insert on table "public"."profiles" to "anon";
+
+grant references on table "public"."profiles" to "anon";
+
+grant select on table "public"."profiles" to "anon";
+
+grant trigger on table "public"."profiles" to "anon";
+
+grant truncate on table "public"."profiles" to "anon";
+
+grant update on table "public"."profiles" to "anon";
+
+grant delete on table "public"."profiles" to "authenticated";
+
+grant insert on table "public"."profiles" to "authenticated";
+
+grant references on table "public"."profiles" to "authenticated";
+
+grant select on table "public"."profiles" to "authenticated";
+
+grant trigger on table "public"."profiles" to "authenticated";
+
+grant truncate on table "public"."profiles" to "authenticated";
+
+grant update on table "public"."profiles" to "authenticated";
+
+grant delete on table "public"."profiles" to "service_role";
+
+grant insert on table "public"."profiles" to "service_role";
+
+grant references on table "public"."profiles" to "service_role";
+
+grant select on table "public"."profiles" to "service_role";
+
+grant trigger on table "public"."profiles" to "service_role";
+
+grant truncate on table "public"."profiles" to "service_role";
+
+grant update on table "public"."profiles" to "service_role";
+
 create policy "Enable insert for users based on user_id"
 on "public"."ai_integration"
 as permissive
@@ -82,6 +141,30 @@ for update
 to authenticated
 using ((auth.uid() = user_id))
 with check ((auth.uid() = user_id));
+
+
+create policy "Public profiles are viewable by everyone."
+on "public"."profiles"
+as permissive
+for select
+to public
+using (true);
+
+
+create policy "Users can insert their own profile."
+on "public"."profiles"
+as permissive
+for insert
+to public
+with check ((auth.uid() = id));
+
+
+create policy "Users can update own profile."
+on "public"."profiles"
+as permissive
+for update
+to public
+using ((auth.uid() = id));
 
 
 

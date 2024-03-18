@@ -12,9 +12,9 @@ export const updateName = async (data: FormData) => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const result = await supabase.auth.updateUser({
-    data: { ...user?.user_metadata, name },
-  });
+  const result = await supabase
+    .from('profiles')
+    .upsert({ id: user?.id, full_name: name });
 
   revalidatePath(`/profile`);
 
