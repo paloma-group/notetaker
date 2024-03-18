@@ -16,8 +16,10 @@ export default function EditableInput({
   action?: (data: FormData) => Promise<any>;
 }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const handleEditClick = () => {
+    setIsError(false);
     setIsEditing(true);
   };
 
@@ -57,7 +59,10 @@ export default function EditableInput({
     const inputText = data.get('input');
     if (typeof inputText === 'string' && action) {
       setIsEditing(false);
-      await action(data);
+      const result = await action(data);
+      if (result.error) {
+        setIsError(true);
+      }
     }
   };
 
@@ -81,6 +86,9 @@ export default function EditableInput({
             )}
             <EditButtons onCancel={handleCancelEditing} isEditing={isEditing} />
           </div>
+          {isError && (
+            <p className="text-sm text-red-500">An error occurred.</p>
+          )}
         </div>
       </div>
     </form>
