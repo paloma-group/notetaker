@@ -3,6 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { updateApiKey } from '@/actions/profile/updateApiKey';
 import { updateName } from '@/actions/profile/updateName';
 import { updateEmail } from '@/actions/profile/updateEmail';
+import ChangePasswordButton from '@/components/ChangePasswordButton';
+import AddEditProfilePhoto from '@/components/AddEditProfilePhoto';
 
 export default async function Profile() {
   const supabase = createClient();
@@ -10,8 +12,6 @@ export default async function Profile() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  console.log({ user });
 
   if (!user) return;
 
@@ -32,7 +32,7 @@ export default async function Profile() {
         <div>
           <h4 className="text-xl font-bold mb-4">Profile photo</h4>
           <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl">
-            add/edit photo
+            <AddEditProfilePhoto />
           </div>
         </div>
         <div>
@@ -52,6 +52,7 @@ export default async function Profile() {
               inputProps={{
                 defaultValue: user.email,
                 placeholder: 'Your email',
+                type: 'email',
                 required: true,
               }}
               action={updateEmail}
@@ -67,7 +68,7 @@ export default async function Profile() {
         <div>
           <h4 className="text-xl font-bold mb-4">Security</h4>
           <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl">
-            change password
+            <ChangePasswordButton />
           </div>
         </div>
         <div>
