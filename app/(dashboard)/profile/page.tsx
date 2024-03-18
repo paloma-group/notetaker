@@ -1,7 +1,8 @@
 import EditableInput from '@/components/EditableInput';
 import { createClient } from '@/utils/supabase/server';
 import { updateApiKey } from '@/actions/profile/updateApiKey';
-import { updateName } from '@/actions/profile/updateName.ts';
+import { updateName } from '@/actions/profile/updateName';
+import { updateEmail } from '@/actions/profile/updateEmail';
 
 export default async function Profile() {
   const supabase = createClient();
@@ -9,6 +10,8 @@ export default async function Profile() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  console.log({ user });
 
   if (!user) return;
 
@@ -46,9 +49,19 @@ export default async function Profile() {
             />
             <EditableInput
               label="Email address"
-              inputProps={{ defaultValue: user.email }}
-              // action={}
+              inputProps={{
+                defaultValue: user.email,
+                placeholder: 'Your email',
+                required: true,
+              }}
+              action={updateEmail}
             />
+            {user.new_email && (
+              <p className="text-sm italic">
+                Please follow the instructions in your email inbox to confirm
+                the change of your email to "{user.new_email}"
+              </p>
+            )}
           </div>
         </div>
         <div>
