@@ -12,5 +12,5 @@ export const resetPassword = async (formData: FormData) => {
     redirectTo: `${process.env.BASE_URL}/update-password`,
   });
 
-  redirect('/change-password/submitted');
+  redirect('/reset-password/submitted');
 };
