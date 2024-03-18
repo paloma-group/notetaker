@@ -38,7 +38,7 @@ export default async function Profile() {
         <div>
           <h4 className="text-xl font-bold mb-4">Profile photo</h4>
           <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl">
-            <AddEditProfilePhoto />
+            <AddEditProfilePhoto avatar_url={profile?.avatar_url} />
           </div>
         </div>
         <div>
