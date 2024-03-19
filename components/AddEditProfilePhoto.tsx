@@ -1,6 +1,9 @@
 'use client';
 
-import avatar from '@/assets/avatar.svg';
+import { uploadAvatar } from '@/utils/profile/upload-avatar';
+import { ChangeEvent, useState } from 'react';
+import spinner from '@/assets/spinner.svg';
+import Avatar from './Avatar';
 import Image from 'next/image';
 
 export default function AddEditProfilePhoto({
@@ -8,20 +11,55 @@ export default function AddEditProfilePhoto({
 }: {
   avatar_url?: string;
 }) {
-  const handleAddEditPhoto = () => {
-    // TODO:
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [avatarUrl, setAvatarUrl] = useState(avatar_url);
+
+  const handleAddEditPhoto = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files?.length) {
+      const image: File = event.target.files[0];
+
+      if (image.size > 5000000) {
+        setError('Image must be less than 5mb');
+      } else {
+        setIsLoading(true);
+        setError(undefined);
+
+        const result = await uploadAvatar(image);
+
+        if (result.error) {
+          setError('An error occurred when setting profile photo');
+        } else {
+          setAvatarUrl(result.data?.avatar_url);
+        }
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
-    <div className="flex">
-      <Image
-        className="mr-4 size-12"
-        src={avatar_url || avatar}
-        alt={'Avatar'}
-      />
-      <button className="underline" onClick={handleAddEditPhoto}>
-        Add/edit profile photo
-      </button>
+    <div className="flex flex-row">
+      <Avatar url={avatarUrl} />
+      {isLoading && (
+        <Image className="m-auto size-6" src={spinner} alt={'Loading'} />
+      )}
+      <div className="flex flex-col justify-center">
+        {!isLoading && (
+          <form>
+            <label htmlFor="inputTag" className="underline cursor-pointer">
+              Add/edit profile photo
+              <input
+                id="inputTag"
+                className="hidden"
+                type="file"
+                accept="image/*"
+                onChange={handleAddEditPhoto}
+              />
+            </label>
+          </form>
+        )}
+        {error && <p className="text-sm text-red-500">{error}</p>}
+      </div>
     </div>
   );
 }
