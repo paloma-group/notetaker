@@ -10,6 +10,5 @@ export async function getAvatar(path?: string) {
   if (!data) {
     return;
   }
-  const url = URL.createObjectURL(data);
-  return url;
+  return URL.createObjectURL(data);
 }
