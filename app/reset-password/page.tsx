@@ -2,7 +2,7 @@ import { resetPassword } from '@/actions/resetPassword';
 import { SubmitButton } from '@/components/SubmitButton';
 
 export default function ResetPassword({
-  searchParams,
+  searchParams: { email, message },
 }: {
   searchParams: { message: string; email: string };
 }) {
@@ -17,7 +17,7 @@ export default function ResetPassword({
           name="email"
           type="email"
           placeholder="you@example.com"
-          defaultValue={searchParams?.email}
+          defaultValue={email}
           required
         />
         <SubmitButton
@@ -27,9 +27,9 @@ export default function ResetPassword({
         >
           Reset password
         </SubmitButton>
-        {searchParams?.message && (
+        {message && (
           <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-            {searchParams.message}
+            {message}
           </p>
         )}
       </form>
