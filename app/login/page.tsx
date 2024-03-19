@@ -44,7 +44,7 @@ export default function Login({
         >
           Sign Up
         </SubmitButton>
-        <Link className="text-center" href="/change-password">
+        <Link className="text-center" href="/reset-password">
           Reset password
         </Link>
         {searchParams?.message && (

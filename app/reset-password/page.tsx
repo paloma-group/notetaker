@@ -4,7 +4,7 @@ import { SubmitButton } from '@/components/SubmitButton';
 export default function ForgotPassword({
   searchParams,
 }: {
-  searchParams: { message: string };
+  searchParams: { message: string; email: string };
 }) {
   return (
     <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 flex-1 flex flex-col w-full p-8 sm:max-w-md justify-center gap-2 bg-white rounded-3xl">
@@ -17,6 +17,7 @@ export default function ForgotPassword({
           name="email"
           type="email"
           placeholder="you@example.com"
+          defaultValue={searchParams?.email}
           required
         />
         <SubmitButton
