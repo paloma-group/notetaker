@@ -1,7 +1,7 @@
 import { resetPassword } from '@/actions/resetPassword';
 import { SubmitButton } from '@/components/SubmitButton';
 
-export default function ForgotPassword({
+export default function ResetPassword({
   searchParams,
 }: {
   searchParams: { message: string; email: string };

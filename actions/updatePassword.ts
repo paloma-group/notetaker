@@ -17,7 +17,7 @@ export const updatePassword = async (code: string, formData: FormData) => {
 
   if (authToken.error || user.error) {
     return redirect(
-      '/login?message=There was a problem whilst resetting password'
+      '/login?message=There was a problem whilst updating password'
     );
   }
 

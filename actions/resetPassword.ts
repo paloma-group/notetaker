@@ -13,9 +13,9 @@ export const resetPassword = async (formData: FormData) => {
 
   if (error) {
     return redirect(
-      '/login?message=There was a problem whilst resetting password'
+      `/reset-password?email=${email}&message=There was a problem whilst resetting password`
     );
   }
 
-  redirect('/reset-password/submitted');
+  redirect(`/reset-password/submitted?email=${email}`);
 };
