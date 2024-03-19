@@ -15,9 +15,6 @@ export const updatePassword = async (code: string, formData: FormData) => {
 
   const user = await supabase.auth.updateUser({ password });
 
-  console.log(authToken.error);
-  console.log(user.error);
-
   if (authToken.error || user.error) {
     return redirect(
       '/login?message=There was a problem whilst resetting password'
