@@ -13,7 +13,7 @@ export const resetPassword = async (formData: FormData) => {
 
   if (error) {
     return redirect(
-      `/reset-password?email=${email}&message=There was a problem whilst resetting password`
+      `/reset-password?email=${email}&message=There was a problem whilst sending reset password link`
     );
   }
 
