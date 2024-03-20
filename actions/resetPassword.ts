@@ -7,8 +7,12 @@ export const resetPassword = async (formData: FormData) => {
   const email = formData.get('email') as string;
   const supabase = createServerActionClient();
 
+  const defaultUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000';
+
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.BASE_URL}/update-password`,
+    redirectTo: `${defaultUrl}/update-password`,
   });
 
   if (error) {
