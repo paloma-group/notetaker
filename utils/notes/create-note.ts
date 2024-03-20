@@ -2,6 +2,7 @@ import { highlights as generateHighlights } from '@/utils/openai/highlights';
 import { transcript } from '@/utils/openai/transcript';
 import { createClient } from '@/utils/supabase/client';
 import { v4 } from 'uuid';
+import { track } from '@/utils/analytics/track';
 
 const supabase = createClient();
 
@@ -12,6 +13,7 @@ export async function createNote({
   userId: string;
   audioBlob: Blob;
 }) {
+  track('note-created');
   // get audio transcript
   const transcription = await transcript(audioBlob);
 

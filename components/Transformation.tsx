@@ -7,6 +7,7 @@ import { useOptimistic, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { PiArrowsClockwise, PiCheck, PiPencil, PiX } from 'react-icons/pi';
 import { CopyToClipboardButton } from './CopyToClipboardButton';
+import { track } from '@/utils/analytics/track';
 
 interface Props {
   title?: string | null;
@@ -61,19 +62,29 @@ const EditButtons = ({
     return <Image className="m-auto size-4" src={spinner} alt={'Loading'} />;
   }
 
+  const submitOnClick = () => {
+    track('transcription-edit');
+  };
+
   return (
     <>
       <button onClick={onCancel} type={'button'}>
         <PiX className={'text-red-500'} />
       </button>
-      <button type={'submit'}>
+      <button type={'submit'} onClick={submitOnClick}>
         <PiCheck className={'text-green-500'} />
       </button>
     </>
   );
 };
 
-const RefreshButton = ({ refreshAction }: Pick<Props, 'refreshAction'>) => {
+const RefreshButton = ({
+  refreshAction,
+  type,
+}: {
+  refreshAction: Props['refreshAction'];
+  type: string;
+}) => {
   const formState = useFormStatus();
 
   if (!refreshAction) {
@@ -84,8 +95,12 @@ const RefreshButton = ({ refreshAction }: Pick<Props, 'refreshAction'>) => {
     return <Image className="m-auto size-4" src={spinner} alt={'Loading'} />;
   }
 
+  const refreshOnClick = () => {
+    track('transformation-regenerated', { type });
+  };
+
   return (
-    <button formAction={refreshAction}>
+    <button formAction={refreshAction} onClick={refreshOnClick}>
       <PiArrowsClockwise />
     </button>
   );
@@ -137,7 +152,7 @@ export default function Transformation({
                 isEditing={isEditing}
               />
             )}
-            <RefreshButton refreshAction={refreshAction} />
+            <RefreshButton refreshAction={refreshAction} type={title} />
             <CopyToClipboardButton text={optimisticText} />
           </div>
         </div>

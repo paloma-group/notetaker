@@ -1,5 +1,5 @@
 import AuthButton from '@/components/AuthButton';
-import { SearchInput } from '@/components/SearchInput';
+import { Search } from '@/components/Search';
 import Link from 'next/link';
 
 export default function Header() {
@@ -15,9 +15,7 @@ export default function Header() {
             >
               <span>+</span>
             </Link>
-            <form action="/notes" className="grow md:grow-0">
-              <SearchInput />
-            </form>
+            <Search />
           </div>
           <h1 className="text-xl font-semibold italic self-center flex-none px-4">
             <Link href="/">Dictation app</Link>

@@ -7,6 +7,7 @@ import {
 } from '@/utils/notes/transcript';
 import { Dialog, Transition } from '@headlessui/react';
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
+import { track } from '@/utils/analytics/track';
 
 interface Props {
   title?: string;
@@ -53,6 +54,7 @@ export default function Modal({
     if (!transformedText) {
       (async () => {
         if (!prompt) return;
+        track('transformation-created', { type: prompt.type });
         const response = await createTransform(prompt.id, note.id);
 
         if (response?.transformed_text) {
