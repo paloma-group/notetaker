@@ -1,6 +1,7 @@
 import AuthButton from '@/components/AuthButton';
 import { SearchInput } from '@/components/SearchInput';
 import Link from 'next/link';
+import Feedback from './Feedback';
 
 export default function Header() {
   return (
@@ -28,6 +29,9 @@ export default function Header() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="absolute right-4 mt-2">
+        <Feedback />
       </div>
     </header>
   );
