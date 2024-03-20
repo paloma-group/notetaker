@@ -83,7 +83,7 @@ const RefreshButton = ({
   type,
 }: {
   refreshAction: Props['refreshAction'];
-  type: string;
+  type?: string | null;
 }) => {
   const formState = useFormStatus();
 
