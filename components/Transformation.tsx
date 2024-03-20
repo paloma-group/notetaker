@@ -7,7 +7,7 @@ import { useOptimistic, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { PiArrowsClockwise, PiCheck, PiPencil, PiX } from 'react-icons/pi';
 import { CopyToClipboardButton } from './CopyToClipboardButton';
-import { track } from '@/utils/analytics/track';
+import { track } from '@/utils/analytics/mixpanel';
 
 interface Props {
   title?: string | null;

@@ -3,7 +3,7 @@
 import { search } from '@/actions/search';
 import React, { useRef } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { track } from '@/utils/analytics/track';
+import { track } from '@/utils/analytics/mixpanel';
 
 export const Search = () => {
   const ref = useRef<HTMLInputElement>(null);

@@ -8,7 +8,7 @@ import { extractRawTextFromTranscript } from '@/utils/notes/transcript';
 import { useState } from 'react';
 import Transformation from './Transformation';
 import Link from 'next/link';
-import { track } from '@/utils/analytics/track';
+import { track } from '@/utils/analytics/mixpanel';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {

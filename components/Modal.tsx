@@ -7,7 +7,7 @@ import {
 } from '@/utils/notes/transcript';
 import { Dialog, Transition } from '@headlessui/react';
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
-import { track } from '@/utils/analytics/track';
+import { track } from '@/utils/analytics/mixpanel';
 
 interface Props {
   title?: string;

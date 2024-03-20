@@ -2,7 +2,7 @@ import { highlights as generateHighlights } from '@/utils/openai/highlights';
 import { transcript } from '@/utils/openai/transcript';
 import { createClient } from '@/utils/supabase/client';
 import { v4 } from 'uuid';
-import { track } from '@/utils/analytics/track';
+import { track } from '@/utils/analytics/mixpanel';
 
 const supabase = createClient();
 
