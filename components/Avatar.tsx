@@ -15,9 +15,11 @@ export default function Avatar({
   const [avatarUrl, setAvatarUrl] = useState(avatar);
 
   useEffect(() => {
-    (async () => {
-      setAvatarUrl(await getAvatar(url));
-    })();
+    if (url) {
+      (async () => {
+        setAvatarUrl(await getAvatar(url));
+      })();
+    }
   }, [url]);
 
   return (
