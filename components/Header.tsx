@@ -1,10 +1,14 @@
 import AuthButton from '@/components/AuthButton';
 import { SearchInput } from '@/components/SearchInput';
 import Link from 'next/link';
+import NavLinks from './NavLinks';
 
 export default function Header() {
   return (
     <header className="sticky py-8 top-0 z-50">
+      <div className="absolute top-2 right-4">
+        <NavLinks />
+      </div>
       <div className="container bg-white rounded-xl">
         <div className="flex h-20 py-4 px-5 md:px-8 justify-center items-center">
           <div className="flex flex-1">
