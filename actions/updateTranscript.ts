@@ -14,8 +14,6 @@ export const updateTranscript = async (noteId: number, data: FormData) => {
     newTranscript
   )) || { title: '', highlights: [], keywords: [] };
 
-  console.log({ title, highlights, keywords });
-
   const result = await supabase
     .from('notes')
     .update({
