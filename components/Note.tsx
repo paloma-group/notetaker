@@ -8,6 +8,7 @@ import { extractRawTextFromTranscript } from '@/utils/notes/transcript';
 import { useState } from 'react';
 import Transformation from './Transformation';
 import Link from 'next/link';
+import { track } from '@/utils/analytics/mixpanel';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -72,6 +73,10 @@ export default function Note({
     setModalOpen(true);
   };
 
+  const onTagClick = (tag?: string) => {
+    track('tag-clicked', { tag });
+  };
+
   const handleTranscriptionChange = updateTranscript.bind(null, note.id);
 
   if (!note) {
@@ -96,7 +101,11 @@ export default function Note({
             {note?.note_tags?.length ? (
               <div className="flex mt-4">
                 {note.note_tags.map((t, i) => (
-                  <Link key={t.tags?.id} href={`/notes?tag=${t.tags?.name}`}>
+                  <Link
+                    key={t.tags?.id}
+                    href={`/notes?tag=${t.tags?.name}`}
+                    onClick={() => onTagClick(t.tags?.name)}
+                  >
                     <span className="capitalize text-xs py-2 px-4 border border-gray-400 hover:border-orange-500 rounded-full mr-3">
                       {t.tags?.name}
                     </span>
