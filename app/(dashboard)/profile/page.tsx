@@ -3,8 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { updateApiKey } from '@/actions/profile/updateApiKey';
 import { updateName } from '@/actions/profile/updateName';
 import { updateEmail } from '@/actions/profile/updateEmail';
-import ChangePasswordButton from '@/components/ChangePasswordButton';
 import AddEditProfilePhoto from '@/components/AddEditProfilePhoto';
+import Link from 'next/link';
 
 export default async function Profile() {
   const supabase = createClient();
@@ -74,7 +74,14 @@ export default async function Profile() {
         <div>
           <h4 className="text-xl font-bold mb-4">Security</h4>
           <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl">
-            <ChangePasswordButton />
+            <Link
+              className="w-full"
+              href={`/reset-password?email=${user.email}`}
+            >
+              <button className="rounded-md w-full px-4 py-2 border bg-white">
+                Change password
+              </button>
+            </Link>
           </div>
         </div>
         <div>
