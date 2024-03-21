@@ -1,5 +1,6 @@
 import { signIn, signUp } from '@/app/login/actions';
-import { SubmitButton } from './submit-button';
+import { SubmitButton } from '@/components/SubmitButton';
+import Link from 'next/link';
 
 export default function Login({
   searchParams,
@@ -7,7 +8,7 @@ export default function Login({
   searchParams: { message: string };
 }) {
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+    <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 flex-1 flex flex-col w-full p-8 sm:max-w-md justify-center gap-2 bg-white rounded-3xl">
       <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
         <label className="text-md" htmlFor="email">
           Email
@@ -43,6 +44,9 @@ export default function Login({
         >
           Sign Up
         </SubmitButton>
+        <Link className="text-center" href="/reset-password">
+          Reset password
+        </Link>
         {searchParams?.message && (
           <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
             {searchParams.message}

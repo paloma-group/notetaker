@@ -1,6 +1,8 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { type NextRequest, NextResponse } from 'next/server';
 
+const public_routes = ['/login', '/reset-password', '/update-password'];
+
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
@@ -13,7 +15,12 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Redirect to login page if no user
-  if (!user && !req.nextUrl.pathname.startsWith('/login')) {
+  if (
+    !user &&
+    !public_routes.some((public_route) =>
+      req.nextUrl.pathname.startsWith(public_route)
+    )
+  ) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
