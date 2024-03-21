@@ -1,7 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
-import Image from 'next/image';
-import avatar from '@/assets/avatar.svg';
+import Avatar from './Avatar';
 import SignOut from './SignOut';
 
 export default async function AuthButton() {
@@ -20,11 +19,7 @@ export default async function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       <Link href="/profile" className="">
-        <Image
-          className="size-8 min-w-6"
-          src={profile?.avatar_url || avatar}
-          alt={'Avatar'}
-        />
+        <Avatar url={profile?.avatar_url} size={32} />
       </Link>
       <SignOut />
     </div>
