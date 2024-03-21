@@ -59,9 +59,11 @@ export default function EditableInput({
     const inputText = data.get('input');
     if (typeof inputText === 'string' && action) {
       setIsEditing(false);
-      const result = await action(data);
-      if (result.error) {
-        setIsError(true);
+      if (inputProps?.defaultValue !== inputText) {
+        const result = await action(data);
+        if (result.error) {
+          setIsError(true);
+        }
       }
     }
   };

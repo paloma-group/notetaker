@@ -131,7 +131,10 @@ export default function Transformation({
     if (typeof transcript === 'string' && action) {
       setIsEditing(false);
       updateOptimisticText(transcript);
-      await action(data);
+
+      if (text !== transcript) {
+        await action(data);
+      }
     }
   };
 
