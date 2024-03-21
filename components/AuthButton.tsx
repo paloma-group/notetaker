@@ -18,7 +18,7 @@ export default async function AuthButton() {
 
   return user ? (
     <div className="flex items-center gap-4">
-      <Link href="/profile" className="">
+      <Link href="/profile" className="w-8 h-8">
         <Avatar url={profile?.avatar_url} size={32} />
       </Link>
       <SignOut />
