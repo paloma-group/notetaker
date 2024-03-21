@@ -5,7 +5,7 @@ import NavLinks from './NavLinks';
 
 export default function Header() {
   return (
-    <header className="sticky py-8 top-0 z-50">
+    <header className="sticky py-8 top-0 z-40">
       <div className="absolute top-2 right-4">
         <NavLinks />
       </div>
