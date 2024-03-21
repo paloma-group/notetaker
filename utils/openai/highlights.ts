@@ -1,3 +1,11 @@
+'use server';
+
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 export const highlights = async (
   transcription: string | null
 ): Promise<{
@@ -5,23 +13,26 @@ export const highlights = async (
   highlights: string[];
   keywords: string[];
 } | null> => {
-  try {
-    const response = await fetch('/api/transcriptionToHighlights', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ transcription }),
-    });
-    const data = await response.json();
-
-    if (response.status !== 200) {
-      console.error(`Request failed with status ${response.status}`);
-      return null; // Return null directly
-    }
-    return data.result;
-  } catch (error) {
-    console.error(error);
+  if (!transcription) {
     return null;
   }
+
+  const model = 'gpt-3.5-turbo';
+  const prompt =
+    'The following is a transcript of a voice message. Extract a title, a max of 3 bullet points or highlights, a max of 3 tags or keywords. Return response in JSON format: { title: string, highlights: [string, string, ...], keywords: [string, string, ...]}';
+
+  const response = await openai.chat.completions.create({
+    messages: [
+      { role: 'system', content: prompt },
+      { role: 'user', content: transcription },
+    ],
+    model,
+  });
+
+  const content = response.choices[0].message.content;
+
+  if (content) {
+    return JSON.parse(content);
+  }
+  return null;
 };

@@ -1,8 +1,11 @@
+'use client';
+
 import { highlights as generateHighlights } from '@/utils/openai/highlights';
 import { transcript } from '@/utils/openai/transcript';
 import { createClient } from '@/utils/supabase/client';
 import { v4 } from 'uuid';
 import { track } from '@/utils/analytics/mixpanel';
+import { addTags } from './add-tags';
 
 const supabase = createClient();
 
@@ -53,30 +56,7 @@ export async function createNote({
     throw Error('Could not create new note');
   }
 
-  // generate tags - check if tags already exists
-  const { data: existingTags } = await supabase
-    .from('tags')
-    .select()
-    .in('name', keywords);
-
-  // create new Tags - if tag (name) already exists ignore
-  const { data: newTags } = await supabase
-    .from('tags')
-    .upsert(
-      keywords.map((k) => ({ name: k.toLowerCase() })),
-      { ignoreDuplicates: true, onConflict: 'name' }
-    )
-    .select();
-
-  // merge both sets of tags
-  const tags = [...(existingTags || []), ...(newTags || [])];
-
-  if (!tags.length) return noteData;
-
-  // insert new NoteTags
-  const { data: noteTags } = await supabase
-    .from('note_tags')
-    .insert(tags.map((t) => ({ note_id: noteData.id, tag_id: t.id })));
+  addTags({ noteId: noteData.id, keywords });
 
   return noteData;
 }
