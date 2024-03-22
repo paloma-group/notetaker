@@ -17,7 +17,7 @@ export default async function Profile() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, avatar_url')
+    .select('id, full_name, avatar_url')
     .limit(1)
     .single();
 
@@ -28,6 +28,7 @@ export default async function Profile() {
     .single();
 
   const handleApiKeyChange = updateApiKey.bind(null, ai_integration?.id);
+  const handleNameChange = updateName.bind(null, profile?.id);
 
   return (
     <div className="flex p-6 md:p-12 bg-white rounded-3xl mb-4 lg:mb-8">
@@ -38,7 +39,10 @@ export default async function Profile() {
         <div>
           <h4 className="text-xl font-bold mb-4">Profile photo</h4>
           <div className="flex p-6 md:p-12 bg-gray-200 rounded-3xl">
-            <AddEditProfilePhoto avatar_url={profile?.avatar_url} />
+            <AddEditProfilePhoto
+              profileId={profile?.id}
+              avatar_url={profile?.avatar_url}
+            />
           </div>
         </div>
         <div>
@@ -51,7 +55,7 @@ export default async function Profile() {
                 placeholder: 'Your name',
                 required: true,
               }}
-              action={updateName}
+              action={handleNameChange}
             />
             <EditableInput
               label="Email address"

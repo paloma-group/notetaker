@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 const supabase = createClient();
 
-export const uploadAvatar = async (avatar: File) => {
+export const uploadAvatar = async (profileId: number, avatar: File) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -18,7 +18,7 @@ export const uploadAvatar = async (avatar: File) => {
 
   const result = await supabase
     .from('profiles')
-    .upsert({ id: user?.id, avatar_url: filePath })
+    .upsert({ id: profileId, user_id: user?.id, avatar_url: filePath })
     .select('avatar_url')
     .limit(1)
     .single();

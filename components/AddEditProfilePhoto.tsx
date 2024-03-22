@@ -7,8 +7,10 @@ import Avatar from './Avatar';
 import Image from 'next/image';
 
 export default function AddEditProfilePhoto({
+  profileId,
   avatar_url,
 }: {
+  profileId: number;
   avatar_url?: string;
 }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +27,7 @@ export default function AddEditProfilePhoto({
         setIsLoading(true);
         setError(undefined);
 
-        const result = await uploadAvatar(image);
+        const result = await uploadAvatar(profileId, image);
 
         if (result.error) {
           setError('An error occurred when setting profile photo');

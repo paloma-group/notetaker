@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 const supabase = createServerActionClient();
 
-export const updateName = async (data: FormData) => {
+export const updateName = async (profileId: number, data: FormData) => {
   const name = data.get('input');
 
   const {
@@ -14,7 +14,7 @@ export const updateName = async (data: FormData) => {
 
   const result = await supabase
     .from('profiles')
-    .upsert({ id: user?.id, full_name: name });
+    .upsert({ id: profileId, user_id: user?.id, full_name: name });
 
   revalidatePath(`/profile`);
 
