@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import RecordCard from '@/assets/record_card.svg';
+import { useState } from 'react';
 
 export type NoteTableView = {
   id: number;
@@ -21,6 +22,32 @@ interface Props {
 }
 
 export default function NotesTable({ notes, search, tag }: Props) {
+  const allTagsLabel = 'All tags';
+  const [selectedTag, setSelectedTag] = useState(allTagsLabel);
+  const [filteredNotes, setFilteredNotes] = useState(notes);
+
+  const tagsSet = new Set<string>();
+  notes?.forEach((note) => {
+    const tagName = note.note_tags?.at(0)?.tags?.name;
+    if (tagName) {
+      tagsSet.add(tagName);
+    }
+  });
+  const tags = Array.from(tagsSet);
+
+  const handleTagClicked = (tag: string) => {
+    if (tag === allTagsLabel) {
+      setFilteredNotes(notes);
+      setSelectedTag(allTagsLabel);
+    } else {
+      const filtered = notes?.filter(
+        (note) => note.note_tags?.at(0)?.tags?.name === tag
+      );
+      setFilteredNotes(filtered);
+      setSelectedTag(tag);
+    }
+  };
+
   return (
     <div
       className={'grid gap-5 p-5 lg:p-10 bg-white rounded-t-lg sm:rounded-3xl'}
@@ -49,8 +76,21 @@ export default function NotesTable({ notes, search, tag }: Props) {
           <input type="submit" hidden />
         </form>
       )}
+      {!tag && (
+        <div className="flex flex-wrap">
+          {['All tags', ...tags].map((tag) => (
+            <button
+              key={tag}
+              className={`capitalize text-xs py-2 px-4 border border-gray-400 rounded-full whitespace-pre place-self-start mt-1 ml-1 hover:border-orange-da ${tag === selectedTag && 'bg-orange-da border-orange-da'}`}
+              onClick={() => handleTagClicked(tag)}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10">
-        {notes?.map((note, i) => (
+        {filteredNotes?.map((note, i) => (
           <Link
             key={note.id}
             href={`/notes/${note.id}`}
