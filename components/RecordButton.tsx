@@ -16,7 +16,7 @@ export const RecordButton = ({ onClick, disabled, isRunning }: Props) => {
       onClick={onClick}
       className={cn(
         'flex items-center px-6 py-4 mx-auto bg-white rounded-full',
-        !disabled && 'hover:border-orange-500',
+        !disabled && 'hover:border-orange-da',
         styles.buttonShadow
       )}
       disabled={disabled}

@@ -15,7 +15,7 @@ export default function Header() {
       <div className="container bg-white rounded-xl">
         <div className="flex h-20 py-4 px-5 md:px-8 justify-center items-center">
           <div className="flex flex-1">
-            <Link href="/" scroll={false}>
+            <Link href="/?record=true" scroll={false}>
               <Image
                 className="drop-shadow-lg"
                 src={record}

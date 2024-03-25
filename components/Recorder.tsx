@@ -8,12 +8,15 @@ import useNavigatorPermissions from '@/hooks/useNavigatorPermission';
 import { formatDate } from '@/utils/date/formatDate';
 import { createNote } from '@/utils/notes/create-note';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import spinner from '../assets/spinner.svg';
 
 const Recorder = ({ userId }: { userId: string }) => {
-  const { push } = useRouter();
+  const { push, replace } = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const microphonePermission = useNavigatorPermissions(
     'microphone' as PermissionName
   );
@@ -26,6 +29,17 @@ const Recorder = ({ userId }: { userId: string }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const seconds = useCounter();
+
+  const record = searchParams.get('record');
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (record) {
+      params.delete('record');
+      replace(`${pathname}?${params.toString()}`);
+      (async () => await startRecording())();
+    }
+  }, [record]);
 
   const startRecording = async () => {
     setIsRunning(true);

@@ -106,7 +106,7 @@ export default function Note({
                     href={`/notes?tag=${t.tags?.name}`}
                     onClick={() => onTagClick(t.tags?.name)}
                   >
-                    <span className="capitalize text-xs py-2 px-4 border border-gray-400 hover:border-orange-500 rounded-full mr-3">
+                    <span className="capitalize text-xs py-2 px-4 border border-gray-400 hover:border-orange-da rounded-full mr-3">
                       {t.tags?.name}
                     </span>
                   </Link>
@@ -121,7 +121,7 @@ export default function Note({
                     <button
                       id={prompt.type}
                       key={prompt.type}
-                      className="text-sm md:text-normal mb-4 py-1.5 md:py-3 px-3 md:px-6 border border-gray-400 bg-white hover:border-orange-500 rounded-full mr-3"
+                      className="text-sm md:text-normal mb-4 py-1.5 md:py-3 px-3 md:px-6 border border-gray-400 bg-white hover:border-orange-da rounded-full mr-3"
                       onClick={onPromptClick}
                     >
                       {prompt.type}
