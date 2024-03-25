@@ -27,7 +27,11 @@ export const Search = () => {
   };
 
   return (
-    <form action={search} onSubmit={handleOnSubmit} className="grow md:grow-0">
+    <form
+      action={search}
+      onSubmit={handleOnSubmit}
+      className="hidden sm:block grow md:grow-0 my-auto ml-2"
+    >
       <input
         ref={ref}
         type="text"
