@@ -75,7 +75,7 @@ export default function EditableInput({
         <div className="relative">
           <input
             name="input"
-            className="rounded-md w-full px-4 py-2 border bg-white disabled:text-gray-400"
+            className="rounded-md w-full truncate pl-4 pr-11 py-2 border bg-white disabled:text-gray-400"
             type="text"
             disabled={!isEditing}
             {...inputProps}
