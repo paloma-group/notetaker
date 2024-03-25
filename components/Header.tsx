@@ -17,7 +17,7 @@ export default function Header() {
           <div className="flex flex-1">
             <Link href="/?record=true" scroll={false}>
               <Image
-                className="drop-shadow-lg"
+                className="drop-shadow-lg hover:drop-shadow-none"
                 src={record}
                 alt="Record icon"
               />
