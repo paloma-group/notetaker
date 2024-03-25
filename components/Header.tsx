@@ -20,11 +20,12 @@ export default function Header() {
                 className="drop-shadow-lg hover:drop-shadow-none"
                 src={record}
                 alt="Record icon"
+                priority
               />
             </Link>
             <Search />
           </div>
-          <Link href="/" className="w-36">
+          <Link href="/">
             <Image className="m-auto" src={logo} alt="Logo" />
           </Link>
           <div className="flex flex-1">
