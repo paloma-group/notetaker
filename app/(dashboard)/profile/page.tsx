@@ -5,6 +5,7 @@ import { updateName } from '@/actions/profile/updateName';
 import { updateEmail } from '@/actions/profile/updateEmail';
 import AddEditProfilePhoto from '@/components/AddEditProfilePhoto';
 import Link from 'next/link';
+import SignOut from '@/components/SignOut';
 
 export default async function Profile() {
   const supabase = createClient();
@@ -101,6 +102,7 @@ export default async function Profile() {
             />
           </div>
         </div>
+        <SignOut />
       </div>
     </div>
   );

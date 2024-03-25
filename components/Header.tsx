@@ -2,6 +2,9 @@ import AuthButton from '@/components/AuthButton';
 import { Search } from '@/components/Search';
 import Link from 'next/link';
 import NavLinks from './NavLinks';
+import Image from 'next/image';
+import logo from '@/assets/logo.svg';
+import record from '@/assets/record.svg';
 
 export default function Header() {
   return (
@@ -12,18 +15,18 @@ export default function Header() {
       <div className="container bg-white rounded-xl">
         <div className="flex h-20 py-4 px-5 md:px-8 justify-center items-center">
           <div className="flex flex-1">
-            <Link
-              href="/"
-              className="hidden md:flex items-center justify-center w-10 h-10 text-white bg-orange-500 rounded-full mr-5"
-              scroll={false}
-            >
-              <span>+</span>
+            <Link href="/" scroll={false}>
+              <Image
+                className="drop-shadow-lg"
+                src={record}
+                alt="Record icon"
+              />
             </Link>
             <Search />
           </div>
-          <h1 className="text-xl font-semibold italic self-center flex-none px-4">
-            <Link href="/">Dictation app</Link>
-          </h1>
+          <Link href="/" className="w-36">
+            <Image className="m-auto" src={logo} alt="Logo" />
+          </Link>
           <div className="flex flex-1">
             <div className="ml-auto">
               <AuthButton />

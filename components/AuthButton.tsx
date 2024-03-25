@@ -1,7 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 import Avatar from './Avatar';
-import SignOut from './SignOut';
 
 export default async function AuthButton() {
   const supabase = createClient();
@@ -21,7 +20,6 @@ export default async function AuthButton() {
       <Link href="/profile" className="w-8 h-8">
         <Avatar url={profile?.avatar_url} size={32} />
       </Link>
-      <SignOut />
     </div>
   ) : (
     <Link

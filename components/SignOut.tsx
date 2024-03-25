@@ -9,7 +9,7 @@ export default async function SignOut() {
   };
 
   return (
-    <form action={signOut} onSubmit={handleOnSubmit}>
+    <form className="text-center" action={signOut} onSubmit={handleOnSubmit}>
       <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
         Logout
       </button>
