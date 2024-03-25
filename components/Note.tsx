@@ -85,7 +85,7 @@ export default function Note({
 
   return (
     <>
-      <div className="flex p-6 md:p-12 bg-white rounded-3xl">
+      <div className="flex p-6 md:p-12 bg-white rounded-t-lg sm:rounded-3xl">
         <div className="hidden md:block self-start w-96 flex-none p-8 rounded-3xl bg-gray-300 mr-16">
           <h3 className="text-xl font-semibold">Highlights</h3>
           <ul className="list-disc pl-4">
