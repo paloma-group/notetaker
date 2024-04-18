@@ -1,16 +1,19 @@
 # Dictaphone AI
 
-Record voice notes & transcribe, summarize, get tasks and much more.
+Record voice notes & transcribe, summarize and much more.
 
 ## Demo
 
-Fully working demo at [https://dictaphone-ai.vercel.app/](https://dictaphone-ai.vercel.app/).
+Fully working demo at [https://notetaker.palomagroup.com/](https://notetaker.palomagroup.com/).
 
 ## Built with
 
 - [Next.js](https://nextjs.org) Supabase template
 - supabase-ssr - a package to configure Supabase Auth to use cookies
 - Styled with [Tailwind CSS](https://tailwindcss.com)
+- Typescript
+- OpenAI - for transcription using Whisper and transformations using GPT-3.5-turbo
+- Sendgrid - for transactional emails
 
 ## Clone and run locally
 
