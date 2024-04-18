@@ -1,4 +1,4 @@
-# Dictaphone AI
+# Notetaker
 
 Record voice notes & transcribe, summarize and much more.
 
