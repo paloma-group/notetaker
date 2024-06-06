@@ -20,26 +20,33 @@ Fully working demo at [https://notetaker.palomagroup.com/](https://notetaker.pal
 1. Pull down the repo
 
    ```bash
-   git clone https://github.com/paloma-group/dictaphone
+   git clone https://github.com/paloma-group/notetaker
    ```
 
 2. Use `cd` to change into the app's directory
 
    ```bash
-   cd dictaphone
+   cd notetaker
    ```
 
-3. Rename `.env.local.example` to `.env.local` and update the following:
+3. Install packages
+
+   ```bash
+   npm install
+   ```
+
+4. Rename `.env.local.example` to `.env.local` and update the following:
 
    ```
    NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
    NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
    OPENAI_API_KEY=[INSERT OPENAI API KEY]
+   DEEPGRAM_API_KEY=[INSERT DEEPGRAM API KEY]
    ```
 
    Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
 
-4. You can now run the Next.js local development server:
+5. You can now run the Next.js local development server:
 
    ```bash
    npm run dev
