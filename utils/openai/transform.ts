@@ -11,7 +11,7 @@ export const transform = async (transcription: string, prompt: string) => {
     );
   }
 
-  const model = 'gpt-3.5-turbo';
+  const model = 'gpt-4o';
   const content = `${prompt}\n\n[TRANSCRIPT]\n${transcription}`;
 
   const response = await openai.chat.completions.create({

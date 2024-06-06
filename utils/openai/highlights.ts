@@ -17,7 +17,7 @@ export const highlights = async (
     return null;
   }
 
-  const model = 'gpt-3.5-turbo';
+  const model = 'gpt-4o';
   const prompt =
     'The following is a transcript of a voice message. Extract a title, a max of 3 bullet points or highlights, a max of 3 tags or keywords. Return response in JSON format: { title: string, highlights: [string, string, ...], keywords: [string, string, ...]}';
 
