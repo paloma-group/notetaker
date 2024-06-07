@@ -14,8 +14,9 @@ export const useSocket = () => {
 
   useEffect(() => {
     // Create the socket instance
+    console.log(`Connecting to socket server at ${process.env.NEXT_PUBLIC_SITE_URL}`)
     const socketInstance: Socket<ServerToClientEvents, ClientToServerEvents> =
-      ClientIO(process.env.NEXT_PUBLIC_SITE_URL || 'ws://localhost:3000', {
+      ClientIO(process.env.NEXT_PUBLIC_SITE_URL || '', {
         path: '/api/socket/io',
         addTrailingSlash: false,
       });

@@ -33,16 +33,18 @@ const Recorder = ({ userId }: { userId: string }) => {
 
   const { socket, isConnected } = useSocket();
 
-  const record = searchParams.get('record');
+  const record = searchParams?.get('record');
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    if (record) {
-      params.delete('record');
-      replace(`${pathname}?${params.toString()}`);
-      (async () => await startRecording())();
+    if (searchParams) {
+      const params = new URLSearchParams(searchParams);
+      if (record) {
+        params.delete('record');
+        replace(`${pathname}?${params.toString()}`);
+        (async () => await startRecording())();
+      }
     }
-  }, [record]);
+  }, [record, searchParams]);
 
   const startRecording = async () => {
     setIsRunning(true);

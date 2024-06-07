@@ -43,7 +43,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
     console.log('Socket.io server already running.');
   }
 
-  res.end('WebSocket setup complete.');
+  res.end();
 };
 
 export default ioHandler;
