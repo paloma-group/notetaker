@@ -7,6 +7,7 @@ import { useInterval } from '@/hooks/useInterval';
 import useNavigatorPermissions from '@/hooks/useNavigatorPermission';
 import { formatDate } from '@/utils/date/formatDate';
 import { createNote } from '@/utils/notes/create-note';
+import { useSocket } from '@/hooks/useSocket';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -29,6 +30,8 @@ const Recorder = ({ userId }: { userId: string }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const seconds = useCounter();
+
+  const { socket, isConnected } = useSocket();
 
   const record = searchParams.get('record');
 
@@ -116,6 +119,7 @@ const Recorder = ({ userId }: { userId: string }) => {
           disabled={isRunning && !mediaRecorder}
           isRunning={isRunning}
         />
+        <div className="text-center mt-4">{`Live transcription available: ${isConnected}`}</div>
         {error && (
           <p className="text-base font-normal text-center mx-auto mt-4 text-red-500">
             {error}
