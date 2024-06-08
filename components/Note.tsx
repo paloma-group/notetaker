@@ -9,7 +9,6 @@ import { useState } from 'react';
 import Transformation from './Transformation';
 import Link from 'next/link';
 import { track } from '@/utils/analytics/mixpanel';
-import { useSocket } from '@/hooks/useSocket';
 
 // Define a function to render highlights from text
 const renderHighlights = (text: string | null): JSX.Element[] => {
@@ -62,9 +61,7 @@ export default function Note({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [prompt, setPrompt] = useState<TTPrompt>();
-  const { socket, isConnected } = useSocket();
-
-
+  
   const onPromptClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.currentTarget;
 
@@ -85,13 +82,6 @@ export default function Note({
   if (!note) {
     return <p>No note to display</p>;
   }
-
-  // TODO remove this once verified that sockets work on Fly.io
-  if(isConnected && socket) {
-    console.log('Sending message to socket.io server');
-    socket.emit('transcribeChunk', 'Hello, World!');
-    console.log('Message sent');
-  }  
 
   return (
     <>

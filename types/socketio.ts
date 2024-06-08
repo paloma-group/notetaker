@@ -6,10 +6,12 @@ export interface ServerToClientEvents {
   noArg: () => void;
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
+  chunkTranscript: (transcript: string) => void;
+  metadata: (data: string) => void;
 }
 
 export interface ClientToServerEvents {
-  transcribeChunk: (msg: string) => void;
+  transcribeChunk: (audioChunk: Blob) => void;
 }
 
 export interface InterServerEvents {

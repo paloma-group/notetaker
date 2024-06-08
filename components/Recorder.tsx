@@ -46,6 +46,21 @@ const Recorder = ({ userId }: { userId: string }) => {
     }
   }, [record, searchParams]);
 
+  useEffect(() => {
+    let finalTranscript = '';
+
+    const handleChunkTranscript = (chunkTranscript: string) => {
+      finalTranscript = `${finalTranscript} ${chunkTranscript}`;
+      console.log(`Final transcript: ${finalTranscript}`);
+    };
+
+    socket?.on('chunkTranscript', handleChunkTranscript);
+
+    return () => {
+      socket?.off('chunkTranscript', handleChunkTranscript);
+    };
+  }, [socket]);
+
   const startRecording = async () => {
     setIsRunning(true);
     setError(null);
@@ -57,6 +72,12 @@ const Recorder = ({ userId }: { userId: string }) => {
 
     recorder.ondataavailable = (e) => {
       audioChunks.push(e.data);
+
+      if (isConnected && socket) {
+        console.log(`Sending audio chunk to server: ${e.data.size} bytes`);
+        socket.emit('transcribeChunk', e.data);
+        console.log('Sent audio chunk to server');
+      }
     };
 
     recorder.onstop = async () => {
@@ -82,6 +103,8 @@ const Recorder = ({ userId }: { userId: string }) => {
         setIsProcessing(false);
         seconds.reset();
       }
+
+      socket?.removeAllListeners('chunkTranscript')
     };
     setMediaRecorder(recorder);
     recorder.start(1000);

@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@deepgram/sdk": "^3.3.4",
     "@headlessui/react": "^1.7.18",
     "@supabase/auth-helpers-nextjs": "latest",
     "@supabase/supabase-js": "latest",
