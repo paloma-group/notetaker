@@ -2,6 +2,7 @@
 
 import { highlights as generateHighlights } from '@/utils/openai/highlights';
 import { transcript } from '@/utils/openai/transcript';
+import { cleanTranscript } from '../openai/cleanTranscript';
 import { createClient } from '@/utils/supabase/client';
 import { v4 } from 'uuid';
 import { track } from '@/utils/analytics/mixpanel';
@@ -40,6 +41,50 @@ export async function createNote({
       audio_file_path: audioData?.path || '',
       // @ts-ignore
       audio_file_id: audioData?.id || '',
+      user_id: userId,
+      transcript: transcription,
+      highlights: highlights.join('\n'),
+      title,
+    })
+    .select()
+    .limit(1)
+    .single();
+
+  if (!noteData || !keywords?.length) {
+    if (error) {
+      throw Error(error.message);
+    }
+    throw Error('Could not create new note');
+  }
+
+  addTags({ noteId: noteData.id, keywords });
+
+  return noteData;
+}
+
+export async function createNoteFromRawTranscript({
+  userId,
+  rawTranscript,
+}: {
+  userId: string;
+  rawTranscript: string;
+}) {
+  track('note-created');
+  // get cleaned up transcript
+  const transcription = await cleanTranscript(rawTranscript);
+
+  // generate AI responses from transcript
+  const { title, highlights, keywords } = (await generateHighlights(
+    transcription
+  )) || { title: '', highlights: [], keywords: [] };
+
+  // create a new Note entity
+  const { data: noteData, error } = await supabase
+    .from('notes')
+    .insert({
+      // audio_file_path: audioData?.path || '',
+      // @ts-ignore
+      // audio_file_id: audioData?.id || '',
       user_id: userId,
       transcript: transcription,
       highlights: highlights.join('\n'),

@@ -43,7 +43,23 @@ class AutomaticSpeechRecognitionPipeline {
   }
 }
 
+const findMatchingPrefix = (stringA, stringB) => {
+  let minLength = Math.min(stringA.length, stringB.length); // Get the length of the shorter string
+  let matchLength = 0; // To track the length of the matching prefix
+
+  for (let i = 0; i < minLength; i++) {
+    if (stringA[i] === stringB[i]) {
+      matchLength++;
+    } else {
+      break; // Stop the loop if characters do not match
+    }
+  }
+
+  return stringA.substring(0, matchLength); // Return the matching part
+};
+
 let processing = false;
+let prevOutputText = '';
 async function generate({ audio, language }) {
   if (processing) return;
   processing = true;
@@ -91,10 +107,19 @@ async function generate({ audio, language }) {
     skip_special_tokens: true,
   });
 
+  let diffFromPrev = '';
+  if (prevOutputText != '' && typeof prevOutputText === 'object') {
+    const matchingPrefix = findMatchingPrefix(prevOutputText[0], outputText[0]);
+    diffFromPrev = [outputText[0].replace(matchingPrefix, '')];
+  } else {
+    diffFromPrev = outputText;
+  }
+  prevOutputText = outputText;
+
   // Send the output back to the main thread
   self.postMessage({
     status: 'complete',
-    output: outputText,
+    output: { diff: diffFromPrev, realtime: outputText},
   });
   processing = false;
 }
@@ -126,7 +151,7 @@ async function load() {
   self.postMessage({ status: 'ready' });
 }
 
-console.log('Worker listener for messages is set.')
+console.log('Worker listener for messages is set.');
 // Listen for messages from the main thread
 self.addEventListener('message', async (e) => {
   console.log(`Worker received message: ${e.data.type}`);

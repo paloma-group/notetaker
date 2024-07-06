@@ -6,7 +6,10 @@ import { useCounter } from '@/hooks/useCounter';
 import { useInterval } from '@/hooks/useInterval';
 import useNavigatorPermissions from '@/hooks/useNavigatorPermission';
 import { formatDate } from '@/utils/date/formatDate';
-import { createNote } from '@/utils/notes/create-note';
+import {
+  createNote,
+  createNoteFromRawTranscript,
+} from '@/utils/notes/create-note';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { use, useEffect, useRef, useState } from 'react';
@@ -33,11 +36,18 @@ const Recorder = ({ userId }: { userId: string }) => {
   const workerRef = useRef<Worker | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const [transcription, setTranscription] = useState('');
+  // const [realtimeTranscript, setRealtimeTranscript] = useState('');
+  const [fullTranscript, setFullTranscript] = useState('');
   const [chunks, setChunks] = useState<Blob[]>([]);
   const [shouldStartRecording, setShouldStartRecording] = useState(false);
 
   const record = searchParams.get('record');
+
+/* TODO
+POC for fully local transcription is kinda working but needs a LLM to clean up the repetition in the transcript.
+Also for long running meetings, only the last final bit gets recorded. Looks like it might be the final bit that is there in the last chunk.
+Need to figure out all those sorts of issues. But also there's an alternative approach that I've come up with so potentially that might work better than this (although not local) - I'll have a crack at that on a separate branch and come back to this if needed.
+*/
 
   // Setup serach params
   useEffect(() => {
@@ -69,12 +79,9 @@ const Recorder = ({ userId }: { userId: string }) => {
           break;
         case 'complete':
           // Log the final transcript and update the state
-          console.log('Transcription complete:', output);
-          setTranscription((prev) => {
-            console.log(`Previous: ${prev}\n\nTranscription: ${transcription}`)
-            const newTranscript = `${transcription} ${output}` //`${prev?.trim()} ${output}`
-            return newTranscript;
-          }); // Assuming 'output' is the final transcript text
+          console.log('Transcription incoming:', output);
+          // setRealtimeTranscript(`${output.realtime}`);
+          setFullTranscript((prev) => `${prev?.trim()} ${output.diff[0]}`);
           if (recorderRef.current?.state === 'recording') {
             recorderRef.current?.requestData();
           }
@@ -109,7 +116,9 @@ const Recorder = ({ userId }: { userId: string }) => {
             audioContextRef.current = new AudioContext({ sampleRate: 16000 });
 
             recorderRef.current.onstart = () => {
-              console.log('onstart: Recording started. Setting chunks to emmpty.')
+              console.log(
+                'onstart: Recording started. Setting chunks to emmpty.'
+              );
               setChunks([]);
             };
             recorderRef.current.ondataavailable = (e) => {
@@ -123,10 +132,10 @@ const Recorder = ({ userId }: { userId: string }) => {
               }
             };
 
-            recorderRef.current.onstop = () => {
+            recorderRef.current.onstop = async () => {
               console.log('onstop: Recording stopped');
               setIsRunning(false);
-              setIsProcessing(false);
+              // setIsProcessing(false);
               seconds.reset();
             };
 
@@ -150,9 +159,9 @@ const Recorder = ({ userId }: { userId: string }) => {
   // Process audio chunks
   useEffect(() => {
     if (!recorderRef.current) return;
-    if (!isRunning) return;
+    // if (!isRunning) return;
     // if (status !== 'ready') return;
-    
+
     if (chunks.length > 0) {
       // Generate from data
       console.log(
@@ -186,47 +195,39 @@ const Recorder = ({ userId }: { userId: string }) => {
     }
   }, [isRunning, isProcessing, chunks]);
 
+  // Process raw transcript after recording is stopped
+  useEffect(() => {
+    if(!isRunning && isProcessing) {
+      try {
+        createNoteFromRawTranscript({
+          userId,
+          rawTranscript: fullTranscript,
+        }).then((note) => {
+          if (note && note.id) {
+            setIsProcessing(false);
+            return push(`/notes/${note.id}`);
+          }
+        });
+      } catch (e) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError(
+            'There was an error with the transcription process, please try again.'
+          );
+        }
+        setIsRunning(false);
+        setIsProcessing(false);
+        seconds.reset();
+      }
+
+    }
+  }, [isRunning, isProcessing]);
+
   const startRecording = async () => {
     setShouldStartRecording(true);
     setIsRunning(true);
     setError(null);
-    // const stream = await navigator.mediaDevices.getUserMedia({
-    //   audio: true,
-    // });
-    // const recorder = new MediaRecorder(stream);
-    // let audioChunks: any = [];
-
-    // recorder.ondataavailable = (e) => {
-    //   audioChunks.push(e.data);
-    // };
-
-    // recorder.onstop = async () => {
-    //   const blob = new Blob(audioChunks, { type: 'audio/mp3' });
-    //   try {
-    //     const note = await createNote({
-    //       userId,
-    //       audioBlob: blob,
-    //     });
-
-    //     if (note) {
-    //       return push(`/notes/${note.id}`);
-    //     }
-    //   } catch (e) {
-    //     if (e instanceof Error) {
-    //       setError(e.message);
-    //     } else {
-    //       setError(
-    //         'There was an error with the transcription process, please try again.'
-    //       );
-    //     }
-    //     setIsRunning(false);
-    //     setIsProcessing(false);
-    //     seconds.reset();
-    //   }
-    //   recorderRef.current = null;
-    // };
-    // recorderRef.current = recorder;
-    // recorder.start(1000);
   };
 
   function stopRecording() {
@@ -235,9 +236,9 @@ const Recorder = ({ userId }: { userId: string }) => {
       return;
     }
 
-    recorderRef.current.stop();
     setIsRunning(false);
     setIsProcessing(true);
+    recorderRef.current.stop();
 
     // Stop all media tracks
     recorderRef.current.stream.getTracks().forEach((track) => track.stop());
@@ -258,11 +259,25 @@ const Recorder = ({ userId }: { userId: string }) => {
     stopRecording();
   };
 
-  const displayTranscript = () => transcription && (
-    <div className="text-base font-normal text-center mx-auto mt-4 overflow-auto max-h-24" style={{lineHeight: '1.5em', maxHeight: '12em'}}>
-      {transcription}
-    </div>
-  )
+  /* const displayRealtimeTranscript = () =>
+    realtimeTranscript && (
+      <div
+        className="text-base font-normal text-center mx-auto mt-4 overflow-auto max-h-24"
+        style={{ lineHeight: '1.5em', maxHeight: '12em' }}
+      >
+        {realtimeTranscript}
+      </div>
+    );
+ */
+  const displayFullTranscript = () =>
+    fullTranscript && (
+      <div
+        className="text-base font-normal text-center mx-auto mt-6 overflow-auto max-h-24"
+        style={{ lineHeight: '1.5em', maxHeight: '12em' }}
+      >
+        {fullTranscript}
+      </div>
+    );
 
   if (!isRunning && !isProcessing) {
     return (
@@ -272,7 +287,8 @@ const Recorder = ({ userId }: { userId: string }) => {
           disabled={isRunning && !recorderRef.current}
           isRunning={isRunning}
         />
-        {displayTranscript()}
+        {/* {displayRealtimeTranscript()}
+        {displayFullTranscript()} */}
         {error && (
           <p className="text-base font-normal text-center mx-auto mt-4 text-red-500">
             {error}
@@ -315,7 +331,8 @@ const Recorder = ({ userId }: { userId: string }) => {
           isRunning={isRunning}
         />
       )}
-      {displayTranscript()}
+      {/* {displayRealtimeTranscript()}
+      {displayFullTranscript()} */}
     </div>
   );
 };

@@ -21,6 +21,7 @@ export const highlights = async (
   const prompt =
     'The following is a transcript of a voice message. Extract a title, a max of 3 bullet points or highlights, a max of 3 tags or keywords. Return response in JSON format: { title: string, highlights: [string, string, ...], keywords: [string, string, ...]}';
 
+    console.log(`Transcript in highlights: ${JSON.stringify(transcription)}`)
   const response = await openai.chat.completions.create({
     messages: [
       { role: 'system', content: prompt },
